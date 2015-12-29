@@ -59,7 +59,7 @@ func (s *Sorting) ConfigureQorResource(res resource.Resourcer) {
 
 		role := res.Config.Permission.Role
 		if _, ok := role.Get("sorting_mode"); !ok {
-			role.Register("sorting_mode", func(req *http.Request, currentUser qor.CurrentUser) bool {
+			role.Register("sorting_mode", func(req *http.Request, currentUser interface{}) bool {
 				return req.URL.Query().Get("sorting") != ""
 			})
 		}
