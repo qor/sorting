@@ -43,8 +43,7 @@ func updatePosition(context *admin.Context) {
 	context.Writer.Write([]byte("Error"))
 }
 
-var injected bool
-
+// ConfigureQorResource configure sorting for qor admin
 func (s *Sorting) ConfigureQorResource(res resource.Resourcer) {
 	if res, ok := res.(*admin.Resource); ok {
 		Admin := res.GetAdmin()
@@ -55,7 +54,7 @@ func (s *Sorting) ConfigureQorResource(res resource.Resourcer) {
 		}
 
 		for _, gopath := range strings.Split(os.Getenv("GOPATH"), ":") {
-			admin.RegisterViewPath(path.Join(gopath, "src/github.com/qor/qor/sorting/views"))
+			admin.RegisterViewPath(path.Join(gopath, "src/github.com/qor/sorting/views"))
 		}
 
 		role := res.Config.Permission.Role
@@ -105,6 +104,6 @@ func (s *Sorting) ConfigureQorResource(res resource.Resourcer) {
 		res.ShowAttrs(res.ShowAttrs(), "-Position", false)
 
 		router := Admin.GetRouter()
-		router.Post(fmt.Sprintf("/%v/:id/sorting/update_position", res.ToParam()), updatePosition)
+		router.Post(fmt.Sprintf("/%v/%v/sorting/update_position", res.ToParam(), res.ParamIDName()), updatePosition)
 	}
 }

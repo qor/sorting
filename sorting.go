@@ -20,18 +20,22 @@ type sortingDescInterface interface {
 	SortingDesc()
 }
 
+// Ascending mode
 type Sorting struct {
 	Position int `sql:"DEFAULT:NULL"`
 }
 
+// GetPosition get current position
 func (position Sorting) GetPosition() int {
 	return position.Position
 }
 
+// SetPosition set position, only set field value, won't save
 func (position *Sorting) SetPosition(pos int) {
 	position.Position = pos
 }
 
+// Descending mode
 type SortingDESC struct {
 	Sorting
 }
@@ -117,14 +121,17 @@ func createPublishEvent(db *gorm.DB, value interface{}) (err error) {
 	return
 }
 
+// MoveUp move position up
 func MoveUp(db *gorm.DB, value sortingInterface, pos int) error {
 	return move(db, value, -pos)
 }
 
+// MoveDown move position down
 func MoveDown(db *gorm.DB, value sortingInterface, pos int) error {
 	return move(db, value, pos)
 }
 
+// MoveTo move position to
 func MoveTo(db *gorm.DB, value sortingInterface, pos int) error {
 	return move(db, value, pos-value.GetPosition())
 }

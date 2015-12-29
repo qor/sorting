@@ -72,6 +72,7 @@ func beforeQuery(scope *gorm.Scope) {
 	}
 }
 
+// RegisterCallbacks register callbacks into gorm db instance
 func RegisterCallbacks(db *gorm.DB) {
 	db.Callback().Create().Before("gorm:create").Register("sorting:initalize_position", initalizePosition)
 	db.Callback().Delete().After("gorm:after_delete").Register("sorting:reorder_positions", reorderPositions)
