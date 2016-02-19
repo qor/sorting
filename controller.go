@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"os"
 	"path"
 	"strconv"
-	"strings"
 
 	"github.com/qor/qor"
 	"github.com/qor/qor/admin"
@@ -53,9 +51,7 @@ func (s *Sorting) ConfigureQorResource(res resource.Resourcer) {
 			res.Config.Permission = roles.NewPermission()
 		}
 
-		for _, gopath := range strings.Split(os.Getenv("GOPATH"), ":") {
-			admin.RegisterViewPath(path.Join(gopath, "src/github.com/qor/sorting/views"))
-		}
+		admin.RegisterViewPath("github.com/qor/sorting/views")
 
 		role := res.Config.Permission.Role
 		if _, ok := role.Get("sorting_mode"); !ok {
