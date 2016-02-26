@@ -20,7 +20,7 @@ type sortingDescInterface interface {
 	SortingDesc()
 }
 
-// Ascending mode
+// Sorting ascending mode
 type Sorting struct {
 	Position int `sql:"DEFAULT:NULL"`
 }
@@ -35,11 +35,12 @@ func (position *Sorting) SetPosition(pos int) {
 	position.Position = pos
 }
 
-// Descending mode
+// SortingDESC descending mode
 type SortingDESC struct {
 	Sorting
 }
 
+// SortingDesc make your model sorting desc by default
 func (SortingDESC) SortingDesc() {}
 
 func newModel(value interface{}) interface{} {

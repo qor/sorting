@@ -58,9 +58,8 @@ func modelValue(value interface{}) interface{} {
 		}
 
 		return reflect.New(typ).Interface()
-	} else {
-		return nil
 	}
+	return nil
 }
 
 func beforeQuery(scope *gorm.Scope) {
