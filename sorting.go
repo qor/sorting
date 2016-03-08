@@ -6,7 +6,7 @@ import (
 	"reflect"
 
 	"github.com/jinzhu/gorm"
-	"github.com/qor/qor/publish"
+	"github.com/qor/publish"
 )
 
 type sortingInterface interface {
