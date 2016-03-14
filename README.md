@@ -1,12 +1,12 @@
 # Sorting
 
-Sorting is used to adds sorting and reordering abilities to [GORM-backend](https://github.com/jinzhu/gorm) models
+Sorting is used to add sorting and reordering abilities to [GORM-backend](https://github.com/jinzhu/gorm) models.
 
 [![GoDoc](https://godoc.org/github.com/qor/sorting?status.svg)](https://godoc.org/github.com/qor/sorting)
 
 ### Register GORM Callbacks
 
-Sorting is using [GORM](https://github.com/jinzhu/gorm) callbacks to log data, so you need to register callbacks first:
+Sorting is utilises [GORM](https://github.com/jinzhu/gorm) callbacks to log data, so you  will need to register callbacks first:
 
 ```go
 import (
@@ -22,12 +22,12 @@ func main() {
 
 ### Sort Modes
 
-Sorting has defined two modes which could be used as anonymous field in model.
+Sorting has defined two modes which could be used as anonymous fields in a model.
 
-- Ascending mode (smallest first)
-- Descending mode (smallest last)
+- Ascending mode:smallest first (`sorting.Sorting`)
+- Descending mode: smallest last (`sorting.SortingDESC`)
 
-It could be used like:
+They can be used as follows:
 
 ```go
 // Ascending mode
@@ -67,9 +67,9 @@ sorting.MoveTo(&db, &product, 1)
 
 ## Qor Support
 
-[QOR](http://getqor.com) is architected from the ground up to accelerate development and deployment of Content Management Systems, E-commerce Systems, and Business Applications, and comprised of modules that abstract common features for such system.
+[QOR](http://getqor.com) is architected from the ground up to accelerate development and deployment of Content Management Systems, E-commerce Systems, and Business Applications and as such is comprised of modules that abstract common features for such systems.
 
-Although Sorting could be used alone, it works nicely with QOR, if you have requirements to manage your application's data, be sure to check QOR out!
+Although Sorting could be used alone, it works very nicely with QOR - if you have requirements to manage your application's data, be sure to check QOR out!
 
 [QOR Demo:  http://demo.getqor.com/admin](http://demo.getqor.com/admin)
 
