@@ -21,6 +21,7 @@
   var EVENT_MOUSE_DOWN = 'mousedown.' + NAMESPACE;
   var EVENT_MOUSE_UP = 'mouseup.' + NAMESPACE;
   var EVENT_DRAG_START = 'dragstart.' + NAMESPACE;
+  var EVENT_DRAG_END = 'dragend.' + NAMESPACE;
   var EVENT_DRAG_OVER = 'dragover.' + NAMESPACE;
   var EVENT_DROP = 'drop.' + NAMESPACE;
   var CLASS_SORTING = 'qor-sorting';
@@ -87,6 +88,7 @@
         on(EVENT_MOUSE_DOWN, options.toggle, $.proxy(this.mousedown, this)).
         on(EVENT_MOUSE_UP, $.proxy(this.mouseup, this)).
         on(EVENT_DRAG_START, SELECTOR_TR, $.proxy(this.dragstart, this)).
+        on(EVENT_DRAG_END, SELECTOR_TR, $.proxy(this.dragend, this)).
         on(EVENT_DRAG_OVER, SELECTOR_TR, $.proxy(this.dragover, this)).
         on(EVENT_DROP, SELECTOR_TR, $.proxy(this.drop, this));
     },
@@ -178,6 +180,11 @@
       this.$element.find(SELECTOR_TR).prop('draggable', false);
     },
 
+    dragend: function (e) {
+      $(SELECTOR_TR).removeClass(CLASS_HOVER);
+      this.$element.find(SELECTOR_TR).prop('draggable', false);
+    },
+
     dragstart: function (e) {
       var event = e.originalEvent,
           $target = $(e.currentTarget);
@@ -213,6 +220,8 @@
       var sourcePosition;
       var targetPosition;
       var largethan;
+
+      $(SELECTOR_TR).removeClass(CLASS_HOVER);
 
       if (!$source || e.currentTarget === this.$source[0]) {
         return;
@@ -272,7 +281,6 @@
         }
       }
 
-      $(SELECTOR_TR).removeClass(CLASS_HOVER);
       this.sort($source, {
         url: source.sortingUrl,
         from: sourcePosition,

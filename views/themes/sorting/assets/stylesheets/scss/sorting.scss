@@ -2,6 +2,11 @@
   .qor-button--actions {
     display: none;
   }
+  tr[draggable='true']{
+    td{
+      background-color: #ccc;
+    }
+  }
 }
 
 .qor-sorting__position {
