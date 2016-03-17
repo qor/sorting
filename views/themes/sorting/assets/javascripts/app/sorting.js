@@ -25,6 +25,7 @@
   var EVENT_DROP = 'drop.' + NAMESPACE;
   var CLASS_SORTING = 'qor-sorting';
   var CLASS_HIGHLIGHT = 'qor-sorting__highlight';
+  var CLASS_HOVER = 'qor-sorting__hover';
   var SELECTOR_TR = 'tbody > tr';
 
   function QorSorter(element, options) {
@@ -189,6 +190,10 @@
 
     dragover: function (e) {
       var $source = this.$source;
+      var options = this.options;
+
+      $(SELECTOR_TR).removeClass(CLASS_HOVER);
+      $(e.currentTarget).prev('tr').addClass(CLASS_HOVER);
 
       if (!$source || e.currentTarget === this.$source[0]) {
         return;
@@ -222,6 +227,7 @@
       sourcePosition = source.position;
       targetPosition = $target.find(options.input).data('position');
       largethan = targetPosition > sourcePosition;
+
 
       this.$element.find(SELECTOR_TR).each(function () {
         var $input = $(this).find(options.input);
@@ -266,6 +272,7 @@
         }
       }
 
+      $(SELECTOR_TR).removeClass(CLASS_HOVER);
       this.sort($source, {
         url: source.sortingUrl,
         from: sourcePosition,
