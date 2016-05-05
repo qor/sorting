@@ -10,6 +10,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/qor/admin"
+	"github.com/qor/qor"
 	"github.com/qor/qor/resource"
 )
 
@@ -78,10 +79,18 @@ func (sortableCollection SortableCollection) Sort(results interface{}) error {
 func (sortableCollection SortableCollection) ConfigureQorMeta(metaor resource.Metaor) error {
 	if meta, ok := metaor.(*admin.Meta); ok {
 		name := strings.TrimSuffix(meta.GetName(), "Sorter")
-		res := meta.GetBaseResource()
+		res := meta.GetBaseResource().(*admin.Resource)
 		sortableMeta := res.GetMeta(name)
 
 		setter := sortableMeta.GetSetter()
+		sortableMeta.SetSetter(func(record interface{}, metaValue *resource.MetaValue, context *qor.Context) {
+			setter(record, metaValue, context)
+		})
+
 		valuer := sortableMeta.GetValuer()
+		sortableMeta.SetValuer(func(record interface{}, context *qor.Context) interface{} {
+			return valuer(record, context)
+		})
 	}
+	return nil
 }
