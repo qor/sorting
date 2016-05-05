@@ -6,8 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/jinzhu/gorm"
+	"github.com/qor/admin"
+	"github.com/qor/qor/resource"
 )
 
 type SortableCollection struct {
@@ -70,4 +73,15 @@ func (sortableCollection SortableCollection) Sort(results interface{}) error {
 	values.Elem().Set(slicePtr.Elem())
 
 	return nil
+}
+
+func (sortableCollection SortableCollection) ConfigureQorMeta(metaor resource.Metaor) error {
+	if meta, ok := metaor.(*admin.Meta); ok {
+		name := strings.TrimSuffix(meta.GetName(), "Sorter")
+		res := meta.GetBaseResource()
+		sortableMeta := res.GetMeta(name)
+
+		setter := sortableMeta.GetSetter()
+		valuer := sortableMeta.GetValuer()
+	}
 }
