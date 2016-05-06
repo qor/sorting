@@ -47,7 +47,9 @@ func (sortableCollection SortableCollection) Sort(results interface{}) error {
 	}
 
 	if values.Kind() == reflect.Ptr {
-		values.Elem().Set(sortableCollection.sortResults(values))
+		if results, err := sortableCollection.sortResults(values); err == nil {
+			values.Elem().Set(results)
+		}
 	} else {
 		return errors.New("unaddressable value")
 	}
@@ -55,7 +57,7 @@ func (sortableCollection SortableCollection) Sort(results interface{}) error {
 	return nil
 }
 
-func (sortableCollection SortableCollection) sortResults(values reflect.Value) reflect.Value {
+func (sortableCollection SortableCollection) sortResults(values reflect.Value) (reflect.Value, error) {
 	scope := gorm.Scope{Value: values.Interface()}
 	if primaryField := scope.PrimaryField(); primaryField != nil {
 		var (
@@ -68,6 +70,7 @@ func (sortableCollection SortableCollection) sortResults(values reflect.Value) r
 		)
 
 		slicePtr.Elem().Set(slice)
+
 		for _, primaryKey := range sortableCollection.PrimaryKeys {
 			for i := 0; i < indirectValues.Len(); i++ {
 				value := indirectValues.Index(i)
@@ -85,10 +88,10 @@ func (sortableCollection SortableCollection) sortResults(values reflect.Value) r
 			}
 		}
 
-		return slicePtr.Elem()
+		return slicePtr.Elem(), nil
 	}
 
-	return reflect.Value{}
+	return reflect.Value{}, errors.New("invalid data")
 }
 
 func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.Metaor) {
@@ -122,8 +125,11 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 					reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).Sort(results)
 					return results
 				} else {
-					values := reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).sortResults(reflect.ValueOf(results))
-					return values.Interface()
+					if values, err := reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).sortResults(reflect.ValueOf(results)); err == nil {
+						return values.Interface()
+					} else {
+						return results
+					}
 				}
 			})
 
