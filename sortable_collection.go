@@ -41,15 +41,26 @@ func (sortableCollection SortableCollection) Value() (driver.Value, error) {
 
 func (sortableCollection SortableCollection) Sort(results interface{}) error {
 	values := reflect.ValueOf(results)
-	if values.Kind() != reflect.Ptr || reflect.Indirect(values).Kind() != reflect.Slice {
+
+	if reflect.Indirect(values).Kind() != reflect.Slice {
 		return errors.New("invalid type")
 	}
 
-	scope := gorm.Scope{Value: results}
+	if values.Kind() == reflect.Ptr {
+		values.Elem().Set(sortableCollection.sortResults(values))
+	} else {
+		return errors.New("unaddressable value")
+	}
+
+	return nil
+}
+
+func (sortableCollection SortableCollection) sortResults(values reflect.Value) reflect.Value {
+	scope := gorm.Scope{Value: values.Interface()}
 	if primaryField := scope.PrimaryField(); primaryField != nil {
 		var (
 			primaryFieldName = primaryField.Name
-			indirectValues   = values.Elem()
+			indirectValues   = reflect.Indirect(values)
 			sliceType        = indirectValues.Type()
 			slice            = reflect.MakeSlice(sliceType, 0, 0)
 			slicePtr         = reflect.New(sliceType)
@@ -74,10 +85,10 @@ func (sortableCollection SortableCollection) Sort(results interface{}) error {
 			}
 		}
 
-		values.Elem().Set(slicePtr.Elem())
+		return slicePtr.Elem()
 	}
 
-	return nil
+	return reflect.Value{}
 }
 
 func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.Metaor) {
@@ -111,9 +122,8 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 					reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).Sort(results)
 					return results
 				} else {
-					pointerOfResults := &results
-					reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).Sort(pointerOfResults)
-					return *pointerOfResults
+					values := reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).sortResults(reflect.ValueOf(results))
+					return values.Interface()
 				}
 			})
 
