@@ -97,16 +97,24 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 			sortableMeta.SetSetter(func(record interface{}, metaValue *resource.MetaValue, context *qor.Context) {
 				primaryKeys := utils.ToArray(metaValue.Value)
 				reflectValue := reflect.Indirect(reflect.ValueOf(record))
-				reflectValue.FieldByName(meta.GetName()).Set(reflect.ValueOf(primaryKeys))
+				reflectValue.FieldByName(meta.GetName()).Addr().Interface().(*SortableCollection).Scan(primaryKeys)
 				setter(record, metaValue, context)
 			})
 
 			valuer := sortableMeta.GetValuer()
 			sortableMeta.SetValuer(func(record interface{}, context *qor.Context) interface{} {
 				results := valuer(record, context)
+				isPtr := reflect.ValueOf(results).Kind() == reflect.Ptr
+
 				reflectValue := reflect.Indirect(reflect.ValueOf(record))
-				reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).Sort(results)
-				return results
+				if isPtr {
+					reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).Sort(results)
+					return results
+				} else {
+					pointerOfResults := &results
+					reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).Sort(pointerOfResults)
+					return *pointerOfResults
+				}
 			})
 
 			meta.SetSetter(func(interface{}, *resource.MetaValue, *qor.Context) {})
