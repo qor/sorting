@@ -167,7 +167,7 @@
       this.sort($source, {
         url: source.sortingUrl,
         from: sourcePosition,
-        to: targetPosition,
+        to: targetPosition
       });
     },
 
@@ -180,7 +180,7 @@
       this.$element.find(SELECTOR_TR).prop('draggable', false);
     },
 
-    dragend: function (e) {
+    dragend: function () {
       $(SELECTOR_TR).removeClass(CLASS_HOVER);
       this.$element.find(SELECTOR_TR).prop('draggable', false);
     },
@@ -197,7 +197,6 @@
 
     dragover: function (e) {
       var $source = this.$source;
-      var options = this.options;
 
       $(SELECTOR_TR).removeClass(CLASS_HOVER);
       $(e.currentTarget).prev('tr').addClass(CLASS_HOVER);
@@ -284,7 +283,7 @@
       this.sort($source, {
         url: source.sortingUrl,
         from: sourcePosition,
-        to: targetPosition,
+        to: targetPosition
       });
     },
 
@@ -298,7 +297,7 @@
           method: 'post',
           data: {
             from: data.from,
-            to: data.to,
+            to: data.to
           },
           success: function (actualPosition, textStatus, xhr) {
             if (xhr.status === 200) {
@@ -331,12 +330,12 @@
     destroy: function () {
       this.unbind();
       this.$element.removeData(NAMESPACE);
-    },
+    }
   };
 
   QorSorter.DEFAULTS = {
     toggle: false,
-    input: false,
+    input: false
   };
 
   QorSorter.TEMPLATE = '<a class="qor-sorting__toggle"><i class="material-icons">swap_vert</i></a>';
@@ -369,7 +368,7 @@
     var selector = '.qor-js-table';
     var options = {
           toggle: '.qor-sorting__toggle',
-          input: '.qor-sorting__position',
+          input: '.qor-sorting__position'
         };
 
     $(document).

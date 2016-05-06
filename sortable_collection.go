@@ -13,6 +13,7 @@ import (
 	"github.com/qor/qor"
 	"github.com/qor/qor/resource"
 	"github.com/qor/qor/utils"
+	"github.com/qor/roles"
 )
 
 type SortableCollection struct {
@@ -40,7 +41,7 @@ func (sortableCollection SortableCollection) Value() (driver.Value, error) {
 
 func (sortableCollection SortableCollection) Sort(results interface{}) error {
 	values := reflect.ValueOf(results)
-	if values.Kind() != reflect.Ptr && reflect.Indirect(values).Kind() != reflect.Slice {
+	if values.Kind() != reflect.Ptr || reflect.Indirect(values).Kind() != reflect.Slice {
 		return errors.New("invalid type")
 	}
 
@@ -87,6 +88,8 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 			sortableMeta = res.GetMeta(name)
 		)
 
+		res.UseTheme("sortable_collection")
+
 		if sortableMeta != nil && (sortableMeta.Type == "select_many" || sortableMeta.Type == "collection_edit") {
 			sortableMeta.Type = "sortable_" + sortableMeta.Type
 
@@ -105,6 +108,9 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 				reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).Sort(results)
 				return results
 			})
+
+			meta.SetSetter(func(interface{}, *resource.MetaValue, *qor.Context) {})
+			meta.SetPermission(roles.Deny(roles.CRUD, roles.Anyone))
 		}
 	}
 }
