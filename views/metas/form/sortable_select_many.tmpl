@@ -1,5 +1,6 @@
 <div class="qor-field">
   {{$current_values := (raw_value_of .ResourceValue .Meta)}}
+  {{$collectionValue := (call .CollectionValue)}}
   <label class="qor-field__label" for="{{.InputId}}">
     {{meta_label .Meta}}
   </label>
@@ -13,19 +14,21 @@
   <div class="qor-field__edit qor-field__block qor-dragable">
 
     <ul class="qor-dragable__list">
-      {{range $values := (call .CollectionValue)}}
-        {{if (is_included $current_values (index $values 0))}}
-          <li data-index="{{index $values 0}}" data-value="{{index $values 1}}">
-            <span>{{index $values 1}}</span>
-            <i class="material-icons qor-dragable__list-delete">clear</i>
-            <i class="material-icons qor-dragable__list-handle">swap_vert</i>
-          </li>
+      {{range $value := $current_values}}
+        {{range $values := $collectionValue}}
+          {{if (is_included $value (index $values 0))}}
+            <li data-index="{{index $values 0}}" data-value="{{index $values 1}}">
+              <span>{{index $values 1}}</span>
+              <i class="material-icons qor-dragable__list-delete">clear</i>
+              <i class="material-icons qor-dragable__list-handle">swap_vert</i>
+            </li>
+          {{end}}
         {{end}}
       {{end}}
     </ul>
 
     <select class="qor-field__input" id="{{.InputId}}" data-toggle="qor.chooser.sortable" data-placeholder="{{t "qor_admin.form.enter_search_term" "Enter Search Term"}}" name="{{.InputName}}" multiple {{if not (has_update_permission .Meta)}}disabled{{end}}>
-      {{range $values := (call .CollectionValue)}}
+      {{range $values := $collectionValue}}
         {{if (is_included $current_values (index $values 0))}}
           <option value="{{index $values 0}}" data-index="{{index $values 0}}" data-value="{{index $values 1}}" selected>{{index $values 1}}</option>
         {{else}}
