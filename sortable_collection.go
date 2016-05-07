@@ -74,7 +74,7 @@ func (sortableCollection SortableCollection) sortResults(values reflect.Value) (
 		for _, primaryKey := range sortableCollection.PrimaryKeys {
 			for i := 0; i < indirectValues.Len(); i++ {
 				value := indirectValues.Index(i)
-				field := value.FieldByName(primaryFieldName)
+				field := reflect.Indirect(value).FieldByName(primaryFieldName)
 				if fmt.Sprint(field.Interface()) == primaryKey {
 					slicePtr.Elem().Set(reflect.Append(slicePtr.Elem(), value))
 					orderedMap[i] = true
