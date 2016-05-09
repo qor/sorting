@@ -40,24 +40,12 @@ func (sortableCollection SortableCollection) Value() (driver.Value, error) {
 }
 
 func (sortableCollection SortableCollection) Sort(results interface{}) error {
-	values := reflect.ValueOf(results)
+	values := reflect.Indirect(reflect.ValueOf(results))
 
-	if reflect.Indirect(values).Kind() != reflect.Slice {
+	if values.Kind() != reflect.Slice {
 		return errors.New("invalid type")
 	}
 
-	if values.Kind() == reflect.Ptr {
-		if results, err := sortableCollection.sortResults(values); err == nil {
-			values.Elem().Set(results)
-		}
-	} else {
-		return errors.New("unaddressable value")
-	}
-
-	return nil
-}
-
-func (sortableCollection SortableCollection) sortResults(values reflect.Value) (reflect.Value, error) {
 	scope := gorm.Scope{Value: values.Interface()}
 	if primaryField := scope.PrimaryField(); primaryField != nil {
 		var (
@@ -65,18 +53,15 @@ func (sortableCollection SortableCollection) sortResults(values reflect.Value) (
 			indirectValues   = reflect.Indirect(values)
 			sliceType        = indirectValues.Type()
 			slice            = reflect.MakeSlice(sliceType, 0, 0)
-			slicePtr         = reflect.New(sliceType)
 			orderedMap       = map[int]bool{}
 		)
-
-		slicePtr.Elem().Set(slice)
 
 		for _, primaryKey := range sortableCollection.PrimaryKeys {
 			for i := 0; i < indirectValues.Len(); i++ {
 				value := indirectValues.Index(i)
 				field := reflect.Indirect(value).FieldByName(primaryFieldName)
 				if fmt.Sprint(field.Interface()) == primaryKey {
-					slicePtr.Elem().Set(reflect.Append(slicePtr.Elem(), value))
+					slice = reflect.Append(slice, value)
 					orderedMap[i] = true
 				}
 			}
@@ -84,14 +69,18 @@ func (sortableCollection SortableCollection) sortResults(values reflect.Value) (
 
 		for i := 0; i < indirectValues.Len(); i++ {
 			if _, ok := orderedMap[i]; !ok {
-				slicePtr.Elem().Set(reflect.Append(slicePtr.Elem(), indirectValues.Index(i)))
+				slice = reflect.Append(slice, indirectValues.Index(i))
 			}
 		}
 
-		return slicePtr.Elem(), nil
+		if values.Kind() != reflect.Ptr {
+			for i := 0; i < slice.Len(); i++ {
+				values.Index(i).Set(slice.Index(i))
+			}
+		}
 	}
 
-	return reflect.Value{}, errors.New("invalid data")
+	return nil
 }
 
 func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.Metaor) {
@@ -118,19 +107,9 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 			valuer := sortableMeta.GetValuer()
 			sortableMeta.SetValuer(func(record interface{}, context *qor.Context) interface{} {
 				results := valuer(record, context)
-				isPtr := reflect.ValueOf(results).Kind() == reflect.Ptr
-
 				reflectValue := reflect.Indirect(reflect.ValueOf(record))
-				if isPtr {
-					reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).Sort(results)
-					return results
-				} else {
-					if values, err := reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).sortResults(reflect.ValueOf(results)); err == nil {
-						return values.Interface()
-					} else {
-						return results
-					}
-				}
+				reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).Sort(results)
+				return results
 			})
 
 			meta.SetSetter(func(interface{}, *resource.MetaValue, *qor.Context) {})

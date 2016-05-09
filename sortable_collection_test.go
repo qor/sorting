@@ -26,6 +26,21 @@ func checkOrder(results interface{}, order []string) error {
 	return nil
 }
 
+func TestSortSlice(t *testing.T) {
+	colorVariations := []ColorVariation{
+		{Model: gorm.Model{ID: 1}, Code: "1"},
+		{Model: gorm.Model{ID: 2}, Code: "2"},
+		{Model: gorm.Model{ID: 3}, Code: "3"},
+	}
+
+	collectionSorting := sorting.SortableCollection{PrimaryKeys: []string{"3", "1", "2"}}
+	collectionSorting.Sort(colorVariations)
+
+	if err := checkOrder(colorVariations, []string{"3", "1", "2"}); err != nil {
+		t.Error(err)
+	}
+}
+
 func TestSort(t *testing.T) {
 	colorVariations := &[]ColorVariation{
 		{Model: gorm.Model{ID: 1}, Code: "1"},
