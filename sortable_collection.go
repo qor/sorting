@@ -25,6 +25,8 @@ func (sortableCollection *SortableCollection) Scan(value interface{}) error {
 	switch values := value.(type) {
 	case []string:
 		sortableCollection.PrimaryKeys = values
+	case string:
+		return json.Unmarshal([]byte(values), sortableCollection)
 	case []byte:
 		return json.Unmarshal(values, sortableCollection)
 	default:
@@ -93,27 +95,50 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 
 		res.UseTheme("sortable_collection")
 
-		if sortableMeta != nil && (sortableMeta.Type == "select_many" || sortableMeta.Type == "collection_edit") {
-			sortableMeta.Type = "sortable_" + sortableMeta.Type
+		if sortableMeta != nil {
+			if sortableMeta.Type == "select_many" {
+				sortableMeta.Type = "sortable_" + sortableMeta.Type
 
-			setter := sortableMeta.GetSetter()
-			sortableMeta.SetSetter(func(record interface{}, metaValue *resource.MetaValue, context *qor.Context) {
-				primaryKeys := utils.ToArray(metaValue.Value)
-				reflectValue := reflect.Indirect(reflect.ValueOf(record))
-				reflectValue.FieldByName(meta.GetName()).Addr().Interface().(*SortableCollection).Scan(primaryKeys)
-				setter(record, metaValue, context)
-			})
+				setter := sortableMeta.GetSetter()
+				sortableMeta.SetSetter(func(record interface{}, metaValue *resource.MetaValue, context *qor.Context) {
+					primaryKeys := utils.ToArray(metaValue.Value)
+					reflectValue := reflect.Indirect(reflect.ValueOf(record))
+					reflectValue.FieldByName(meta.GetName()).Addr().Interface().(*SortableCollection).Scan(primaryKeys)
+					setter(record, metaValue, context)
+				})
 
-			valuer := sortableMeta.GetValuer()
-			sortableMeta.SetValuer(func(record interface{}, context *qor.Context) interface{} {
-				results := valuer(record, context)
-				reflectValue := reflect.Indirect(reflect.ValueOf(record))
-				reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).Sort(results)
-				return results
-			})
+				valuer := sortableMeta.GetValuer()
+				sortableMeta.SetValuer(func(record interface{}, context *qor.Context) interface{} {
+					results := valuer(record, context)
+					reflectValue := reflect.Indirect(reflect.ValueOf(record))
+					reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).Sort(results)
+					return results
+				})
 
-			meta.SetSetter(func(interface{}, *resource.MetaValue, *qor.Context) {})
-			meta.SetPermission(roles.Deny(roles.CRUD, roles.Anyone))
+				meta.SetSetter(func(interface{}, *resource.MetaValue, *qor.Context) {})
+				meta.SetPermission(roles.Deny(roles.CRUD, roles.Anyone))
+			}
+
+			if sortableMeta.Type == "collection_edit" {
+				sortableMeta.Type = "sortable_" + sortableMeta.Type
+
+				valuer := sortableMeta.GetValuer()
+				sortableMeta.SetValuer(func(record interface{}, context *qor.Context) interface{} {
+					results := valuer(record, context)
+					reflectValue := reflect.Indirect(reflect.ValueOf(record))
+					reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).Sort(results)
+					return results
+				})
+
+				meta.SetSetter(func(record interface{}, metaValue *resource.MetaValue, context *qor.Context) {
+					primaryKeys := utils.ToArray(metaValue.Value)
+					reflectValue := reflect.Indirect(reflect.ValueOf(record))
+					reflectValue.FieldByName(meta.GetName()).Addr().Interface().(*SortableCollection).Scan(primaryKeys)
+				})
+
+				meta.SetPermission(roles.Deny(roles.Read, roles.Anyone))
+			}
 		}
+
 	}
 }
