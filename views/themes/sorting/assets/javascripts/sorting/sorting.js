@@ -338,7 +338,7 @@
     input: false
   };
 
-  QorSorter.TEMPLATE = '<a class="qor-sorting__toggle"><i class="material-icons">swap_vert</i></a>';
+  QorSorter.TEMPLATE = '<a class="qor-sorting__toggle"><i class="material-icons">drag_handle</i></a>';
 
   QorSorter.plugin = function (options) {
     return this.each(function () {
