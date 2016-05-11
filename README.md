@@ -118,10 +118,10 @@ If you want to make a `select_many`, `collection_edit` Field be sortable, you co
 ```
 // For model relations
 type Product struct {
-	gorm.Model
-	l10n.Locale
-	Collections           []Collection
-	CollectionsSorter     sorting.SortableCollection
+  gorm.Model
+  l10n.Locale
+  Collections           []Collection
+  CollectionsSorter     sorting.SortableCollection
   ColorVariations       []ColorVariation `l10n:"sync"`
   ColorVariationsSorter sorting.SortableCollection
 }
