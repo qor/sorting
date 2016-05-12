@@ -7,8 +7,8 @@ import (
 	"path"
 	"strconv"
 
-	"github.com/qor/qor"
 	"github.com/qor/admin"
+	"github.com/qor/qor"
 	"github.com/qor/qor/resource"
 	"github.com/qor/roles"
 )
@@ -51,7 +51,7 @@ func (s *Sorting) ConfigureQorResource(res resource.Resourcer) {
 			res.Config.Permission = roles.NewPermission()
 		}
 
-		admin.RegisterViewPath("github.com/qor/sorting/views")
+		Admin.RegisterViewPath("github.com/qor/sorting/views")
 
 		role := res.Config.Permission.Role
 		if _, ok := role.Get("sorting_mode"); !ok {
