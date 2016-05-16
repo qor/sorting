@@ -130,6 +130,21 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 					return results
 				})
 
+				res.AddProcessor(func(record interface{}, metaValues *resource.MetaValues, context *qor.Context) error {
+					var primaryValues []string
+					reflectValue := reflect.Indirect(reflect.ValueOf(record))
+					fieldValue := reflect.Indirect(reflectValue.FieldByName(name))
+					if fieldValue.Kind() == reflect.Slice {
+						for i := 0; i < fieldValue.Len(); i++ {
+							scope := gorm.Scope{Value: fieldValue.Index(i).Interface()}
+							primaryValues = append(primaryValues, fmt.Sprint(scope.PrimaryKeyValue()))
+						}
+						reflectValue.FieldByName(meta.GetName()).Addr().Interface().(*SortableCollection).Scan(primaryValues)
+					}
+
+					return nil
+				})
+
 				meta.SetSetter(func(record interface{}, metaValue *resource.MetaValue, context *qor.Context) {
 					primaryKeys := utils.ToArray(metaValue.Value)
 					reflectValue := reflect.Indirect(reflect.ValueOf(record))
