@@ -1,13 +1,12 @@
-<div class="qor-field collection-edit qor-fieldset-container">
+<div class="qor-field collection-edit qor-fieldset-container qor-sortable" data-toggle="qor.collection.sortable">
   <label class="qor-field__label" for="{{.InputId}}">
     {{meta_label .Meta}}
   </label>
-
-  <div class="qor-field__block qor-sortable" data-toggle="qor.collection.sortable">
-    <div class="qor-sortable__button">
-      <button class="mdl-button mdl-button--primary mdl-js-button qor-sortable__button-change" type="button">{{t "qor_admin.form.button.change_position" "Change Position"}}</button>
-      <button class="mdl-button mdl-button--primary mdl-js-button qor-sortable__button-done" type="button" style="display: none">{{t "qor_admin.form.button.done" "Done"}}</button>
-    </div>
+  <div class="qor-sortable__button">
+    <button class="mdl-button mdl-button--primary mdl-js-button qor-sortable__button-change" type="button">{{t "qor_admin.form.button.change_position" "Change Position"}}</button>
+    <button class="mdl-button mdl-button--primary mdl-js-button qor-sortable__button-done" type="button" style="display: none">{{t "qor_admin.form.button.done" "Done"}}</button>
+  </div>
+  <div class="qor-field__block">
     {{$meta := .Meta}}
     {{if .Value}}
       {{range $index, $value := .Value }}
@@ -32,7 +31,7 @@
     {{end}}
 
     {{if has_create_permission .Meta}}
-      <fieldset class="qor-fieldset qor-sortable__item qor-sortable__item-new qor-fieldset--new" style="display: none">
+      <fieldset class="qor-fieldset qor-sortable__item qor-fieldset--new" style="display: none">
         <div class="qor-sortable__change">
           <div class="qor-sortable__action" style="display: none;">
             <button class="mdl-button mdl-button--colored mdl-button--raised mdl-js-button qor-sortable__button-move" type="button">
