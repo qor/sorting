@@ -27,7 +27,7 @@
   var CLASS_ACTION = '.qor-sortable__action';
   var CLASS_ACTION_POSITION = '.qor-sortable__action-position';
   var IS_DELETE = '.is-delete';
-  var IS_LOADED = 'load-sortable-collection';
+  var IS_LOADED = 'sortable-collection-loaded';
 
   function QorCollectionSortable(element, options) {
     this.$element = $(element);
@@ -222,7 +222,7 @@
     if ($('body').data(IS_LOADED)){
       return;
     }
-    $('body').data(IS_LOADED,'true');
+    $('body').data(IS_LOADED,true);
 
     $(document).
       on(EVENT_DISABLE, function (e) {

@@ -29,7 +29,7 @@
   var CLASS_SORTABLE_DELETE = '.qor-dragable__list-delete';
   var CLASS_SORTABLE_DATA = '.qor-dragable__list-data';
   var CLASS_SORTABLE_BUTTON_ADD = '.qor-dragable__button-add';
-  var IS_LOADED = 'load-sortable-select-many';
+  var IS_LOADED = 'sortable-select-many-loaded';
 
   function QorChooserSortable(element, options) {
     this.$element = $(element);
@@ -204,7 +204,7 @@
       return;
     }
 
-    $('body').data(IS_LOADED,'true');
+    $('body').data(IS_LOADED,true);
 
     $(document).
       on(EVENT_DISABLE, function (e) {
