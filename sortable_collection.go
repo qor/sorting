@@ -151,7 +151,7 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 					reflectValue.FieldByName(meta.GetName()).Addr().Interface().(*SortableCollection).Scan(primaryKeys)
 				})
 
-				meta.SetPermission(roles.Deny(roles.Read, roles.Anyone))
+				meta.SetPermission(roles.Deny(roles.CRUD, roles.Anyone))
 			}
 		}
 
