@@ -13,7 +13,6 @@
 
   'use strict';
 
-  var Mustache = window.Mustache;
   var NAMESPACE = 'qor.collection.sortable';
   var EVENT_ENABLE = 'enable.' + NAMESPACE;
   var EVENT_DISABLE = 'disable.' + NAMESPACE;
@@ -97,7 +96,7 @@
         for (var i = 1; i <= itemTotal; i++) {
           orderData.index = i;
           ( orderData.itemIndex == i ) ? ( orderData.isSelected = true ) : ( orderData.isSelected = false );
-          $action.find('select').append(Mustache.render(QorCollectionSortable.OPTION_HTML, orderData));
+          $action.find('select').append(window.Mustache.render(QorCollectionSortable.OPTION_HTML, orderData));
         }
 
         // reset form resource name prop
