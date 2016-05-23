@@ -13,9 +13,6 @@
 
   'use strict';
 
-  var Mustache = window.Mustache;
-  var Sortable = window.Sortable;
-  var _ = window._;
   var NAMESPACE = 'qor.chooser.sortable';
   var EVENT_ENABLE = 'enable.' + NAMESPACE;
   var EVENT_CLICK = 'click.' + NAMESPACE;
@@ -51,7 +48,7 @@
 
       var sortEle = $parent.find(CLASS_SORTABLE)[0];
 
-      this.sortable = Sortable.create(sortEle, {
+      this.sortable = window.Sortable.create(sortEle, {
           animation: 150,
           handle: CLASS_SORTABLE_HANDLE,
           filter: CLASS_SORTABLE_DELETE,
@@ -128,7 +125,7 @@
     },
 
     renderItem: function (data) {
-      return Mustache.render(QorChooserSortable.LIST_HTML, data);
+      return window.Mustache.render(QorChooserSortable.LIST_HTML, data);
     },
 
     renderOption: function () {
@@ -137,8 +134,8 @@
 
       $selector.empty();
 
-      _.each(indexArr,function(id){
-        $selector.append( Mustache.render(QorChooserSortable.OPTION_HTML, ({'value': id})));
+      window._.each(indexArr,function(id){
+        $selector.append( window.Mustache.render(QorChooserSortable.OPTION_HTML, ({'value': id})));
       });
 
     },
