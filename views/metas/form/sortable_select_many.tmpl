@@ -1,6 +1,6 @@
 <div class="qor-field">
   {{$current_values := (raw_value_of .ResourceValue .Meta)}}
-  {{$collectionValue := (call .CollectionValue)}}
+  {{$collectionValue := (.Meta.Config.GetCollection .ResourceValue .Context)}}
   <label class="qor-field__label" for="{{.InputId}}">
     {{meta_label .Meta}}
   </label>
