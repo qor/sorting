@@ -138,7 +138,7 @@
     destroy: function () {
       this.sortable.destroy();
       this.unbind();
-      this.$element.chosen('destroy').removeData(NAMESPACE);
+      this.$element.select2('destroy').removeData(NAMESPACE);
     }
   };
 
