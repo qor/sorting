@@ -20,6 +20,7 @@
   var CLASS_CHOSE = '.select2-selection__choice';
   var CLASS_CHOSE_REMOVE = '.select2-selection__choice__remove';
   var CLASS_CHOSE_CONTAINER = '.select2-container';
+  var CLASS_CHOSE_INPUT = '.select2-search__field';
   var CLASS_SORTABLE_BODY = '.qor-dragable';
   var CLASS_SORTABLE = '.qor-dragable__list';
   var CLASS_SORTABLE_HANDLE = '.qor-dragable__list-handle';
@@ -40,6 +41,7 @@
     init: function () {
       var $this = this.$element;
       var $parent = $this.parents(CLASS_SORTABLE_BODY);
+      var placeholderText = $this.data('placeholder');
       var self = this;
 
       this.$selector = $parent.find(CLASS_SORTABLE_DATA);
@@ -55,7 +57,6 @@
           dataIdAttr: 'data-index',
 
           onFilter: function (e){
-            // TODO
             var $ele = $(e.item);
             var eleIndex = $ele.data('index');
 
@@ -68,11 +69,12 @@
       });
 
       $this.select2({
-        minimumResultsForSearch: 5,
-        placeholder: $this.data('placeholder')
+        minimumResultsForSearch: 1,
+        dropdownParent: $this.parent()
       })
       .on('change', function () {
         $parent.find(CLASS_CHOSE).hide();
+        $(CLASS_CHOSE_INPUT).attr('placeholder',placeholderText);
       })
       .on('select2:select', function (e) {
         self.addItems(e.params.data.id);
@@ -83,6 +85,7 @@
 
       $parent.find(CLASS_CHOSE_CONTAINER).hide();
       $parent.find(CLASS_CHOSE).hide();
+      $(CLASS_CHOSE_INPUT).attr('placeholder',placeholderText);
 
       this.bind();
 
@@ -97,8 +100,13 @@
     },
 
     show: function () {
-      this.$parent.find(CLASS_CHOSE_CONTAINER).show().find('.search-field input').click();
+      var $container = this.$parent.find(CLASS_CHOSE_CONTAINER);
+
+      $container.show();
       this.$parent.find(CLASS_SORTABLE_BUTTON_ADD).hide();
+      setTimeout(function(){
+        $container.find(CLASS_CHOSE_INPUT).click();
+      },100);
     },
 
     renderItem: function (data) {

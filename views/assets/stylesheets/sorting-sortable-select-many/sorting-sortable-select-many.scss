@@ -1,22 +1,6 @@
 $color-black: "0,0,0";
 
 .qor-dragable{
-    .search-field{
-        position: relative;
-        input{
-            text-indent: 24px;
-        }
-        &::after{
-            content: '\E8B6';
-            font-family: "Material Icons";
-            color: unquote("rgba(#{$color-black}, 0.54)");
-            font-size: 18px;
-            position: absolute;
-            top: 0;
-            left: 0;
-            line-height: 31px;
-        }
-    }
     .qor-dragable__list{
         margin: 0 0 24px 0;
         padding: 0;
@@ -53,11 +37,32 @@ $color-black: "0,0,0";
             }
         }
     }
-    .select2-container--default .select2-selection--multiple{
-        border: 0;
-        border-bottom: 2px solid #03a9f4;
-        background-color: transparent;
-        border-radius: 0;
-        padding: 0;
+    /* select2 layout */
+    .select2-container--default{
+        .select2-search--inline{
+            float: none;
+            &::after{
+                content: '\E8B6';
+                font-family: "Material Icons";
+                color: unquote("rgba(#{$color-black}, 0.24)");
+                font-size: 18px;
+                position: absolute;
+                top: 0;
+                left: 0;
+                line-height: 31px;
+            }
+            .select2-search__field{
+                width: 50% !important;
+                text-indent: 10px;
+            }
+        }
+        .select2-selection--multiple{
+            border: 0;
+            border-bottom: 2px solid #03a9f4;
+            background-color: transparent;
+            border-radius: 0;
+            padding: 0;
+            height: 32px;
+        }
     }
 }
