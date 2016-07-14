@@ -53,15 +53,11 @@ $color-black: "0,0,0";
             }
         }
     }
-    .chosen-container-multi{
-        .chosen-choices{
-            border: 0;
-            border-bottom: 2px solid #03a9f4;
-            background-color: transparent;
-            padding: 0;
-            li.search-field input[type=text]{
-                width: auto !important;
-            }
-        }
+    .select2-container--default .select2-selection--multiple{
+        border: 0;
+        border-bottom: 2px solid #03a9f4;
+        background-color: transparent;
+        border-radius: 0;
+        padding: 0;
     }
 }

@@ -17,9 +17,9 @@
   var EVENT_ENABLE = 'enable.' + NAMESPACE;
   var EVENT_CLICK = 'click.' + NAMESPACE;
   var EVENT_DISABLE = 'disable.' + NAMESPACE;
-  var CLASS_MULTI = '.chosen-container-multi';
-  var CLASS_CHOSE = '.search-choice';
-  var CLASS_CHOSE_CONTAINER = '.chosen-container';
+  var CLASS_CHOSE = '.select2-selection__choice';
+  var CLASS_CHOSE_REMOVE = '.select2-selection__choice__remove';
+  var CLASS_CHOSE_CONTAINER = '.select2-container';
   var CLASS_SORTABLE_BODY = '.qor-dragable';
   var CLASS_SORTABLE = '.qor-dragable__list';
   var CLASS_SORTABLE_HANDLE = '.qor-dragable__list-handle';
@@ -60,52 +60,29 @@
             var eleIndex = $ele.data('index');
 
             $ele.remove();
-            self.removeItems(eleIndex);
+            self.removeItemsFromList(eleIndex);
           },
           onUpdate: function (){
             self.renderOption();
           }
       });
 
-      if (!$this.prop('multiple')) {
-        if ($this.children('[selected]').length) {
-          $this.prepend('<option value=""></option>');
-        } else {
-          $this.prepend('<option value="" selected></option>');
-        }
-      }
-
-      $this.on('chosen:ready', function (e,chosen) {
-
-        $(chosen.chosen.search_field).attr('placeholder',this.$element.data('placeholder'));
-        $parent.find(CLASS_CHOSE).hide();
-        $parent.find(CLASS_CHOSE_CONTAINER).hide();
-
-      }.bind(this));
-
-      $this.chosen({
-        allow_single_deselect: true,
-        search_contains: true,
-        disable_search_threshold: 10,
-        width: '100%',
-        display_selected_options: false
+      $this.select2({
+        minimumResultsForSearch: 5,
+        placeholder: $this.data('placeholder')
       })
-      .on('change', function (e,params) {
-        var $target = $(e.target);
-        var $chosenMulti = $target.next(CLASS_MULTI);
-        var selected = params.selected;
-
-        if (!$chosenMulti.size()){
-          return;
-        }
-
+      .on('change', function () {
         $parent.find(CLASS_CHOSE).hide();
+      })
+      .on('select2:select', function (e) {
+        self.addItems(e.params.data.id);
+      })
+      .on('select2:unselect', function (e) {
+        self.removeItems(e.params.data.id);
+      });
 
-        if (selected){
-          this.addItems(selected);
-        }
-
-      }.bind(this));
+      $parent.find(CLASS_CHOSE_CONTAINER).hide();
+      $parent.find(CLASS_CHOSE).hide();
 
       this.bind();
 
@@ -141,12 +118,12 @@
     },
 
     removeItems: function (index) {
-      var $this = this.$element;
-      var targetOption = $this.find('[data-index="' + index + '"]');
-      var optionArrayIndex = $this.find('option').index(targetOption);
+      $(CLASS_SORTABLE).find('li[data-index="' + index + '"]').remove();
+      this.renderOption();
+    },
 
-      this.$parent.find(CLASS_CHOSE).find('[data-option-array-index="' + optionArrayIndex + '"]').click();
-
+    removeItemsFromList: function (index) {
+      this.$parent.find(CLASS_CHOSE).filter('[option-id="'+ index + '"]').find(CLASS_CHOSE_REMOVE).click();
       this.renderOption();
     },
 
