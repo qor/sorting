@@ -27,8 +27,12 @@ func init() {
 	l10n.RegisterCallbacks(db)
 
 	pb = publish.New(db)
-	pb.ProductionDB().DropTable(&User{}, &Product{}, &Brand{})
-	pb.DraftDB().DropTable(&Product{})
+	if err := pb.ProductionDB().DropTableIfExists(&User{}, &Product{}, &Brand{}).Error; err != nil {
+		panic(err)
+	}
+	if err := pb.DraftDB().DropTableIfExists(&Product{}).Error; err != nil {
+		panic(err)
+	}
 	db.AutoMigrate(&User{}, &Product{}, &Brand{})
 	pb.AutoMigrate(&Product{})
 }
