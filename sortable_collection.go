@@ -98,7 +98,7 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 		if sortableMeta != nil {
 			if sortableMeta.Type == "select_many" {
 				if selectManyConfig, ok := sortableMeta.Config.(*admin.SelectManyConfig); ok {
-					selectManyConfig.SelectionTemplate = `{{render_with "metas/form/sortable_select_many" .}}`
+					selectManyConfig.Template = `{{render_with "metas/form/sortable_select_many" .}}`
 				}
 
 				setter := sortableMeta.GetSetter()
