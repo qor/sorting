@@ -98,7 +98,7 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 		if sortableMeta != nil {
 			if sortableMeta.Type == "select_many" {
 				if selectManyConfig, ok := sortableMeta.Config.(*admin.SelectManyConfig); ok {
-					selectManyConfig.Template = `{{render_with "metas/form/sortable_select_many" .}}`
+					selectManyConfig.SelectionTemplate = "metas/form/sortable_select_many.tmpl"
 				}
 
 				setter := sortableMeta.GetSetter()
@@ -122,7 +122,9 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 			}
 
 			if sortableMeta.Type == "collection_edit" {
-				sortableMeta.Type = "sortable_" + sortableMeta.Type
+				if collectionEditConfig, ok := sortableMeta.Config.(*admin.CollectionEditConfig); ok {
+					collectionEditConfig.Template = "metas/form/sortable_collection_edit.tmpl"
+				}
 
 				valuer := sortableMeta.GetValuer()
 				sortableMeta.SetValuer(func(record interface{}, context *qor.Context) interface{} {
