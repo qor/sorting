@@ -38,8 +38,8 @@
     </select>
 
 
-    <button class="mdl-button mdl-button--fab mdl-button--mini-fab mdl-button--primary mdl-js-button mdl-js-ripple-effect qor-dragable__button-add" type="button">
-      <i class="material-icons">add</i>
+    <button class="mdl-button mdl-button--primary mdl-js-button mdl-js-ripple-effect qor-dragable__button-add" type="button">
+      Add {{meta_label .Meta}}
     </button>
 
     <select class="qor-field__input" data-toggle="qor.chooser.sortable" data-placeholder="{{t "qor_admin.form.enter_search_term" "Enter Search Term"}}" {{if not (has_update_permission .Meta)}}disabled{{end}} multiple>
