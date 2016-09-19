@@ -1,19 +1,5 @@
 .qor-sortable{
     position: relative;
-    .qor-sortable__action{
-        position: relative;
-        &:after{
-            content: "\E5C5";
-            font-family: "Material Icons";
-            color: #000;
-            position: absolute;
-            top: 2px;
-            left: 40px;
-            font-size: 16px;
-            display: block;
-        }
-    }
-
     .qor-sortable__action-position{
         -webkit-appearance: none;
         appearance: none;
@@ -22,8 +8,8 @@
         line-height: 20px;
         border: 2px solid #03a9f4;
         border-radius: 2px;
-        background: #fff;
-        background-size: 12px;
+        background: #fff url('../images/icon_trangle.svg') no-repeat 90% center;
+        background-size: 9px;
         display: inline-block;
         text-indent: 5px;
     }
