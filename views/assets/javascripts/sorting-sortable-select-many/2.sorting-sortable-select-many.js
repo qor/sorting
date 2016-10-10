@@ -162,9 +162,6 @@
       var fn;
 
       if (!data) {
-        if (!$.fn.chosen) {
-          return;
-        }
 
         if (/destroy/.test(options)) {
           return;
@@ -186,7 +183,7 @@
       return;
     }
 
-    $('body').data(IS_LOADED,true);
+    $('body').data(IS_LOADED, true);
 
     $(document).
       on(EVENT_DISABLE, function (e) {
