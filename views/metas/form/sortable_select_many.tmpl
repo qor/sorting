@@ -39,7 +39,7 @@
 
 
     <button class="mdl-button mdl-button--primary mdl-js-button mdl-js-ripple-effect qor-dragable__button-add" type="button">
-      Add {{meta_label .Meta}}
+      {{t (printf "qor_admin.form.add_%v" (singular (meta_label .Meta))) (printf "Add %v" (singular (meta_label .Meta)))}}
     </button>
 
     <select class="qor-field__input" data-toggle="qor.chooser.sortable" data-placeholder="{{t "qor_admin.form.enter_search_term" "Enter Search Term"}}" {{if not (has_update_permission .Meta)}}disabled{{end}} multiple>

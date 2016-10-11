@@ -47,7 +47,7 @@
       </fieldset>
 
       <button class="mdl-button mdl-button--primary mdl-js-button qor-fieldset__add qor-sortable__button-add" type="button">
-        Add {{meta_label .Meta}}
+        {{t (printf "qor_admin.form.add_%v" (singular (meta_label .Meta))) (printf "Add %v" (singular (meta_label .Meta)))}}
       </button>
     {{end}}
   </div>
