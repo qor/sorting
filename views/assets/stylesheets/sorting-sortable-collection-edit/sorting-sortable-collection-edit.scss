@@ -27,6 +27,12 @@
         top: 12px;
         right: 24px;
     }
+    .qor-sortable__button button{
+        padding: 0;
+        &:hover{
+            background: none;
+        }
+    }
     .qor-sortable__button button,.qor-sortable__button-move{
         height: 24px;
         line-height: 24px;
