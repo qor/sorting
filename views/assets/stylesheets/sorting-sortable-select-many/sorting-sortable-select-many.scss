@@ -39,6 +39,7 @@ $color-black: "0,0,0";
     }
     /* select2 layout */
     .select2-container--default{
+        width: 100% !important;
         .select2-search--inline{
             float: none;
             &::after{
