@@ -29,8 +29,15 @@ $color-black: "0,0,0";
             padding: 8px;
             border-bottom: 1px solid unquote("rgba(#{$color-black}, 0.12)");
             min-height: 24px;
+            > div, > span{
+                display: inline-block;
+                vertical-align: middle;
+            }
+            > div{
+                max-width: 100px;
+            }
             > span{
-                float: left;
+                width: calc(100% - 100px);
             }
             &:hover{
                 background-color: unquote("rgba(#{$color-black}, 0.06)");
