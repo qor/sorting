@@ -47,11 +47,11 @@ func (s *Sorting) ConfigureQorResource(res resource.Resourcer) {
 		Admin := res.GetAdmin()
 		res.UseTheme("sorting")
 
-		if res.Config.Permission == nil {
-			res.Config.Permission = roles.NewPermission()
+		if res.Permission == nil {
+			res.Permission = roles.NewPermission()
 		}
 
-		role := res.Config.Permission.Role
+		role := res.Permission.Role
 		if _, ok := role.Get("sorting_mode"); !ok {
 			role.Register("sorting_mode", func(req *http.Request, currentUser interface{}) bool {
 				return req.URL.Query().Get("sorting") != ""
