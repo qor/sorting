@@ -58,13 +58,14 @@ func (sortableCollection SortableCollection) Sort(results interface{}) error {
 			orderedMap       = map[int]bool{}
 		)
 
-		for _, primaryKey := range sortableCollection.PrimaryKeys {
-			for i := 0; i < indirectValues.Len(); i++ {
+		for i := 0; i < indirectValues.Len(); i++ {
+			for _, primaryKey := range sortableCollection.PrimaryKeys {
 				value := indirectValues.Index(i)
 				field := reflect.Indirect(value).FieldByName(primaryFieldName)
 				if fmt.Sprint(field.Interface()) == primaryKey {
 					slice = reflect.Append(slice, value)
 					orderedMap[i] = true
+					break
 				}
 			}
 		}
