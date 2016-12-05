@@ -1,6 +1,19 @@
 <div class="qor-field">
   {{$current_values := (raw_value_of .ResourceValue .Meta)}}
   {{$collectionValue := (.Meta.Config.GetCollection .ResourceValue .Context)}}
+
+  {{if .Meta.Config.Select2ResultTemplate}}
+    <script name="select2-result-template" type="x-tmpl-mustache">
+      {{.Meta.Config.Select2ResultTemplate}}
+    </script>
+  {{end}}
+
+  {{if .Meta.Config.Select2SelectionTemplate}}
+    <script name="select2-selection-template" type="x-tmpl-mustache">
+      {{.Meta.Config.Select2SelectionTemplate}}
+    </script>
+  {{end}}
+
   <label class="qor-field__label" for="{{.InputId}}">
     {{meta_label .Meta}}
   </label>
@@ -43,7 +56,7 @@
       {{t (printf "qor_admin.form.add_%v" (singular (meta_label .Meta))) (printf "Add %v" (singular (meta_label .Meta)))}}
     </button>
 
-    <select class="qor-field__input" data-toggle="qor.chooser.sortable" data-placeholder="{{t "qor_admin.form.enter_search_term" "Enter Search Term"}}" {{if not (has_update_permission .Meta)}}disabled{{end}} multiple {{if .Meta.Config.RemoteDataResource}}data-remote-data-url="{{url_for .Meta.Config.RemoteDataResource}}"{{end}}>
+    <select class="qor-field__input" data-toggle="qor.chooser.sortable" data-placeholder="{{t "qor_admin.form.enter_search_term" "Enter Search Term"}}" {{if not (has_update_permission .Meta)}}disabled{{end}} multiple {{if .Meta.Config.RemoteDataResource}}data-ajax--url="{{url_for .Meta.Config.RemoteDataResource}}" data-remote-data="true"{{end}}>
       {{if .Meta.Config.RemoteDataResource}}
         {{range $value := $current_values}}
           <option value="{{primary_key_of $value}}" data-index="{{primary_key_of $value}}" data-value="{{stringify $value}}" selected>{{stringify $value}}</option>
