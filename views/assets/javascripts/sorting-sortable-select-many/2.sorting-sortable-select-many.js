@@ -157,7 +157,7 @@
         },
 
         addItems: function(data) {
-            data.value = data.Name || data.text;
+            data.value = data.Name || data.text || data.Text || data.Title || data.Code;
             this.$sortableList.append(this.renderItem(data));
             this.renderOption();
         },
