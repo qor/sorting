@@ -53,7 +53,7 @@
         initItemOrder: function(resetResource) {
             var $item = this.$element.find(CLASS_ITEM).filter(':visible').not(IS_DELETE);
 
-            // return false if haven't any item
+            // return false if no item
             if (!$item.size()) {
                 return;
             }
@@ -102,13 +102,29 @@
                 // reset form resource name prop
                 if (resetResource) {
                     var resourceName,
-                        newResourceName,
+                        newPosition,
+                        resourceNameEnd,
+                        hasPrefixPosition = /\[\d+\]/.test(resourceNamePrefix),
                         $resource = $(this).find('[name^="' + resourceNamePrefix + '"]');
 
-                    $resource.size() && $resource.each(function() {
+                    if (!$resource.length) {
+                        return;
+                    }
+
+                    $resource.each(function() {
                         resourceName = $(this).prop('name');
-                        newResourceName = '[' + orderData.itemIndex + ']';
-                        resourceName = resourceName.replace(/\[\d+\]/, newResourceName);
+                        resourceNameEnd = resourceName.match(/\.\w+$/);
+                        newPosition = `[${orderData.itemIndex}]`;
+
+                        if (hasPrefixPosition) {
+                            // fullResourceName = QorResource.SerializableMeta.Sections[0].Items[0(this number is the position)].Name
+                            // resourceNamePrefix = QorResource.SerializableMeta.Sections[0].Items
+                            // change the last [0].Name to real position
+                            resourceName = resourceName.replace(/\[\d+\]\.\w+$/, `${newPosition}${resourceNameEnd}`);
+                        } else {
+                            resourceName = resourceName.replace(/\[\d+\]/, newPosition);
+                        }
+
                         $(this).prop('name', resourceName);
                     });
                 }
