@@ -58,33 +58,31 @@ func (s *Sorting) ConfigureQorResource(res resource.Resourcer) {
 			})
 		}
 
-		if res.GetMeta("Position") == nil {
-			res.Meta(&admin.Meta{
-				Name: "Position",
-				Valuer: func(value interface{}, ctx *qor.Context) interface{} {
-					db := ctx.GetDB()
-					var count int
-					var pos = value.(sortingInterface).GetPosition()
+		res.Meta(&admin.Meta{
+			Name: "Position",
+			Valuer: func(value interface{}, ctx *qor.Context) interface{} {
+				db := ctx.GetDB()
+				var count int
+				var pos = value.(sortingInterface).GetPosition()
 
-					if _, ok := modelValue(value).(sortingDescInterface); ok {
-						if total, ok := db.Get("sorting_total_count"); ok {
-							count = total.(int)
-						} else {
-							var result = res.NewStruct()
-							db.New().Order("position DESC", true).First(result)
-							count = result.(sortingInterface).GetPosition()
-							db.InstantSet("sorting_total_count", count)
-						}
-						pos = count - pos + 1
+				if _, ok := modelValue(value).(sortingDescInterface); ok {
+					if total, ok := db.Get("sorting_total_count"); ok {
+						count = total.(int)
+					} else {
+						var result = res.NewStruct()
+						db.New().Order("position DESC", true).First(result)
+						count = result.(sortingInterface).GetPosition()
+						db.InstantSet("sorting_total_count", count)
 					}
+					pos = count - pos + 1
+				}
 
-					primaryKey := ctx.GetDB().NewScope(value).PrimaryKeyValue()
-					url := path.Join(ctx.Request.URL.Path, fmt.Sprintf("%v", primaryKey), "sorting/update_position")
-					return template.HTML(fmt.Sprintf("<input type=\"number\" class=\"qor-sorting__position\" value=\"%v\" data-sorting-url=\"%v\" data-position=\"%v\">", pos, url, pos))
-				},
-				Permission: roles.Allow(roles.Read, "sorting_mode"),
-			})
-		}
+				primaryKey := ctx.GetDB().NewScope(value).PrimaryKeyValue()
+				url := path.Join(ctx.Request.URL.Path, fmt.Sprintf("%v", primaryKey), "sorting/update_position")
+				return template.HTML(fmt.Sprintf("<input type=\"number\" class=\"qor-sorting__position\" value=\"%v\" data-sorting-url=\"%v\" data-position=\"%v\">", pos, url, pos))
+			},
+			Permission: roles.Allow(roles.Read, "sorting_mode"),
+		})
 
 		attrs := res.ConvertSectionToStrings(res.IndexAttrs())
 		for _, attr := range attrs {

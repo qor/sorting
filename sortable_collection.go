@@ -93,7 +93,7 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 		var (
 			name         = strings.TrimSuffix(meta.GetName(), "Sorter")
 			res          = meta.GetBaseResource().(*admin.Resource)
-			sortableMeta = res.GetMeta(name)
+			sortableMeta = res.Meta(&admin.Meta{Name: name})
 		)
 
 		res.UseTheme("sortable_collection")
