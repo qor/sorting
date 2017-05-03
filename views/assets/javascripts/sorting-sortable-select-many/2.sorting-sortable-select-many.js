@@ -40,7 +40,7 @@
 
         init: function() {
             var $this = this.$element,
-                fromRemote = $this.data('remote-data'),
+                select2Data = $this.data(),
                 $parent = $this.parents(CLASS_SORTABLE_BODY),
                 placeholderText = $this.data('placeholder'),
                 self = this,
@@ -73,8 +73,8 @@
                 }
             });
 
-            if (fromRemote) {
-                option.ajax = $.fn.select2.ajaxCommonOptions;
+            if (select2Data.remoteData) {
+                option.ajax = $.fn.select2.ajaxCommonOptions(select2Data);
 
                 option.templateResult = function(data) {
                     var tmpl = $this.parents('.qor-field').find('[name="select2-result-template"]');
@@ -142,7 +142,9 @@
             $selector.empty();
 
             window._.each(indexArr, function(id) {
-                $selector.append(window.Mustache.render(QorChooserSortable.OPTION_HTML, ({ 'value': id })));
+                $selector.append(window.Mustache.render(QorChooserSortable.OPTION_HTML, ({
+                    'value': id
+                })));
             });
         },
 
