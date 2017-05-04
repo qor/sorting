@@ -159,7 +159,7 @@
         },
 
         addItems: function(data) {
-            data.value = data.Name || data.text || data.Text || data.Title || data.Code;
+            data.value = data.Name || data.text || data.Text || data.Title || data.Code || data.Id || data.ID;
             this.$sortableList.append(this.renderItem(data));
             this.renderOption();
         },
@@ -173,9 +173,9 @@
 
     QorChooserSortable.DEFAULTS = {};
 
-    QorChooserSortable.LIST_HTML = '<li data-index=[[id]] data-value=[[value]]><span>[[value]]</span><div><i class="material-icons qor-dragable__list-delete">clear</i><i class="material-icons qor-dragable__list-handle">drag_handle</i></div></li>';
+    QorChooserSortable.LIST_HTML = '<li data-index="[[id]]" data-value="[[value]]"><span>[[value]]</span><div><i class="material-icons qor-dragable__list-delete">clear</i><i class="material-icons qor-dragable__list-handle">drag_handle</i></div></li>';
 
-    QorChooserSortable.OPTION_HTML = '<option selected value=[[value]]></option>';
+    QorChooserSortable.OPTION_HTML = '<option selected value="[[value]]"></option>';
 
     QorChooserSortable.plugin = function(options) {
         return this.each(function() {
