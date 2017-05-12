@@ -13,6 +13,7 @@
 
     'use strict';
 
+    var $body = $('body');
     var NAMESPACE = 'qor.chooser.sortable';
     var EVENT_ENABLE = 'enable.' + NAMESPACE;
     var EVENT_CLICK = 'click.' + NAMESPACE;
@@ -27,7 +28,12 @@
     var CLASS_SORTABLE_DELETE = '.qor-dragable__list-delete';
     var CLASS_SORTABLE_DATA = '.qor-dragable__list-data';
     var CLASS_SORTABLE_BUTTON_ADD = '.qor-dragable__button-add';
+    var CLASS_BOTTOMSHEETS = '.qor-bottomsheets';
+    var CLASS_PARENT = '.qor-dragable';
+    var CLASS_SELECT_FIELD = '.qor-dragable__list';
     var IS_LOADED = 'sortable-select-many-loaded';
+    var CLASS_MANY = 'qor-bottomsheets__select-many';
+    var CLASS_DELETED_ITEM = 'qor-selected-many__deleted';
 
     function QorChooserSortable(element, options) {
         this.$element = $(element);
@@ -110,7 +116,6 @@
             $(CLASS_CHOSE_INPUT).attr('placeholder', placeholderText);
 
             this.bind();
-
         },
 
         bind: function() {
@@ -121,7 +126,27 @@
             this.$parent.off(EVENT_CLICK, CLASS_SORTABLE_BUTTON_ADD, this.show);
         },
 
-        show: function() {
+        show: function(e) {
+          if ($(e.target).attr('data-selectmany-url')) {
+            var $this = $(e.target),
+              data = $this.data();
+
+            this.BottomSheets = $body.data('qor.bottomsheets');
+            this.bottomsheetsData = data;
+
+            this.$selector = data.selectId ? $(data.selectId) : $this.closest(CLASS_PARENT).find('select');
+            this.$selectFeild = this.$selector.closest(CLASS_PARENT).find(CLASS_SELECT_FIELD);
+
+            // select many templates
+            this.SELECT_MANY_SELECTED_ICON = $('[name="select-many-selected-icon"]').html();
+            this.SELECT_MANY_UNSELECTED_ICON = $('[name="select-many-unselected-icon"]').html();
+            this.SELECT_MANY_HINT = $('[name="select-many-hint"]').html();
+            this.SELECT_MANY_TEMPLATE = $('[name="select-many-template"]').html();
+
+            data.url = data.selectmanyUrl;
+
+            this.BottomSheets.open(data, this.handleBottomSelect.bind(this));
+          } else {
             var $container = this.$parent.find(CLASS_CHOSE_CONTAINER);
 
             $container.show();
@@ -129,6 +154,57 @@
             setTimeout(function() {
                 $container.find(CLASS_CHOSE_INPUT).click();
             }, 100);
+          }
+        },
+
+        handleBottomSelect: function () {
+          var $bottomsheets = $(CLASS_BOTTOMSHEETS),
+          options = {
+            onSelect: this.onSelectResults.bind(this),  // render selected item after click item lists
+            onSubmit: this.onSubmitResults.bind(this)   // render new items after new item form submitted
+          };
+
+          $bottomsheets.qorSelectCore(options).addClass(CLASS_MANY);
+          this.initItems();
+        },
+
+        onSelectResults: function (data) {
+          if ($(CLASS_SORTABLE).find('li[data-index="' + data.primaryKey + '"]').size() == 0) {
+            this.addItems(data);
+          } else {
+            this.removeItems(data);
+          }
+        },
+
+        onSubmitResults: function (data) {
+          this.addItems(data);
+        },
+
+        initItems: function () {
+          var $tr = $(CLASS_BOTTOMSHEETS).find('tbody tr'),
+              selectedIconTmpl = this.SELECT_MANY_SELECTED_ICON,
+              unSelectedIconTmpl = this.SELECT_MANY_UNSELECTED_ICON,
+              selectedIDs = [],
+              primaryKey,
+              $selectedItems = this.$selectFeild.find('[data-primary-key]').not('.' + CLASS_DELETED_ITEM);
+
+          $selectedItems.each(function () {
+            selectedIDs.push($(this).data().primaryKey);
+          });
+
+          $tr.each(function () {
+            var $this = $(this),
+                $td = $this.find('td:first');
+
+            primaryKey = $this.data().primaryKey;
+
+            if (selectedIDs.indexOf(primaryKey) !='-1') {
+              $this.addClass(CLASS_SELECTED);
+              $td.append(selectedIconTmpl);
+            } else {
+              $td.append(unSelectedIconTmpl);
+            }
+          });
         },
 
         renderItem: function(data) {
@@ -137,7 +213,7 @@
 
         renderOption: function() {
             var indexArr = this.sortable.toArray();
-            var $selector = this.$selector;
+            var $selector = this.$parent.find(CLASS_SORTABLE_DATA);
 
             $selector.empty();
 
@@ -149,19 +225,23 @@
         },
 
         removeItems: function(data) {
-            $(CLASS_SORTABLE).find('li[data-index="' + data.id + '"]').remove();
+            $(CLASS_SORTABLE).find('li[data-index="' + data.primaryKey + '"]').remove();
             this.renderOption();
         },
 
         removeItemsFromList: function(index) {
-            this.$parent.find(CLASS_CHOSE).filter('[option-id="' + index + '"]').find(CLASS_CHOSE_REMOVE).click();
             this.renderOption();
         },
 
-        addItems: function(data) {
-            data.value = data.Name || data.text || data.Text || data.Title || data.Code || data.Id || data.ID;
+        addItems: function(data, isNewData) {
+            data.id = data.Id || data.ID || data[Object.keys(data)[0]];
+            data.value = data.Name || data.text || data.Text || data.Title || data.Code || data.Id || data.ID || data[Object.keys(data)[0]];
             this.$sortableList.append(this.renderItem(data));
             this.renderOption();
+
+            if (isNewData) {
+              this.BottomSheets.hide();
+            }
         },
 
         destroy: function() {
@@ -173,7 +253,7 @@
 
     QorChooserSortable.DEFAULTS = {};
 
-    QorChooserSortable.LIST_HTML = '<li data-index="[[id]]" data-value="[[value]]"><span>[[value]]</span><div><i class="material-icons qor-dragable__list-delete">clear</i><i class="material-icons qor-dragable__list-handle">drag_handle</i></div></li>';
+    QorChooserSortable.LIST_HTML = '<li data-index="[[primaryKey]]" data-value="[[value]]"><span>[[value]]</span><div><i class="material-icons qor-dragable__list-delete">clear</i><i class="material-icons qor-dragable__list-handle">drag_handle</i></div></li>';
 
     QorChooserSortable.OPTION_HTML = '<option selected value="[[value]]"></option>';
 
