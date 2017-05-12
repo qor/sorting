@@ -177,7 +177,7 @@
         },
 
         onSubmitResults: function (data) {
-          this.addItems(data);
+          this.addItems(data, true);
         },
 
         initItems: function () {
