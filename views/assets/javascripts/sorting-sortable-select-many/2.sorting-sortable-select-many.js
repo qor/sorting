@@ -127,33 +127,33 @@
         },
 
         show: function(e) {
-          if ($(e.target).attr('data-selectmany-url')) {
-            var $this = $(e.target),
-              data = $this.data();
+          var $this = $(e.target).parent('.qor-dragable__button-add');
+          if ($this.attr('data-selectmany-url')) {
+              var data = $this.data();
 
-            this.BottomSheets = $body.data('qor.bottomsheets');
-            this.bottomsheetsData = data;
+              this.BottomSheets = $body.data('qor.bottomsheets');
+              this.bottomsheetsData = data;
 
-            this.$selector = data.selectId ? $(data.selectId) : $this.closest(CLASS_PARENT).find('select');
-            this.$selectFeild = this.$selector.closest(CLASS_PARENT).find(CLASS_SELECT_FIELD);
+              this.$selector = data.selectId ? $(data.selectId) : $this.closest(CLASS_PARENT).find('select');
+              this.$selectFeild = this.$selector.closest(CLASS_PARENT).find(CLASS_SELECT_FIELD);
 
-            // select many templates
-            this.SELECT_MANY_SELECTED_ICON = $('[name="select-many-selected-icon"]').html();
-            this.SELECT_MANY_UNSELECTED_ICON = $('[name="select-many-unselected-icon"]').html();
-            this.SELECT_MANY_HINT = $('[name="select-many-hint"]').html();
-            this.SELECT_MANY_TEMPLATE = $('[name="select-many-template"]').html();
+              // select many templates
+              this.SELECT_MANY_SELECTED_ICON = $('[name="select-many-selected-icon"]').html();
+              this.SELECT_MANY_UNSELECTED_ICON = $('[name="select-many-unselected-icon"]').html();
+              this.SELECT_MANY_HINT = $('[name="select-many-hint"]').html();
+              this.SELECT_MANY_TEMPLATE = $('[name="select-many-template"]').html();
 
-            data.url = data.selectmanyUrl;
+              data.url = data.selectmanyUrl;
 
-            this.BottomSheets.open(data, this.handleBottomSelect.bind(this));
+              this.BottomSheets.open(data, this.handleBottomSelect.bind(this));
           } else {
-            var $container = this.$parent.find(CLASS_CHOSE_CONTAINER);
+              var $container = this.$parent.find(CLASS_CHOSE_CONTAINER);
 
-            $container.show();
-            this.$parent.find(CLASS_SORTABLE_BUTTON_ADD).hide();
-            setTimeout(function() {
-                $container.find(CLASS_CHOSE_INPUT).click();
-            }, 100);
+              $container.show();
+              this.$parent.find(CLASS_SORTABLE_BUTTON_ADD).hide();
+              setTimeout(function() {
+                  $container.find(CLASS_CHOSE_INPUT).click();
+              }, 100);
           }
         },
 
