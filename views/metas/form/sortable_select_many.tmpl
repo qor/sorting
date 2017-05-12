@@ -25,19 +25,21 @@
   </div>
 
   <div class="qor-field__edit qor-field__block qor-dragable">
-
     <ul class="qor-dragable__list">
       {{range $value := $current_values}}
-        {{range $values := $collectionValue}}
-          {{if (is_equal $value (index $values 0))}}
-            <li data-index="{{index $values 0}}" data-value="{{index $values 1}}">
-              <span>{{index $values 1}}</span>
-              <div>
-                <i class="material-icons qor-dragable__list-delete">clear</i>
-                <i class="material-icons qor-dragable__list-handle">drag_handle</i>
-              </div>
-            </li>
+        {{if $collectionValue}}
+          {{range $values := $collectionValue}}
+            {{if (is_equal $value (index $values 0))}}
+              <li data-index="{{index $values 0}}" data-value="{{index $values 1}}">
+                <span>{{index $values 1}}</span>
+                <div>
+                  <i class="material-icons qor-dragable__list-delete">clear</i>
+                  <i class="material-icons qor-dragable__list-handle">drag_handle</i>
+                </div>
+              </li>
+            {{end}}
           {{end}}
+        {{else}}
         {{end}}
       {{end}}
     </ul>
@@ -52,9 +54,19 @@
       {{end}}
     </select>
 
-    <button class="mdl-button mdl-button--primary mdl-js-button mdl-js-ripple-effect qor-dragable__button-add" type="button">
-      {{t (printf "qor_admin.form.add_%v" (singular (meta_label .Meta))) (printf "Add %v" (singular (meta_label .Meta)))}}
-    </button>
+    {{if (eq .Meta.Config.SelectMode "bottom_sheet")}}
+      <button class="mdl-button mdl-button--primary mdl-js-button mdl-js-ripple-effect" type="button" data-select-modal="many" {{if .InputId}}data-select-id="#{{.InputId}}"{{end}} data-selectmany-url="{{url_for .Meta.Config.RemoteDataResource}}" {{if .Meta.Config.PrimaryField}}data-remote-data-primary-key="{{.Meta.Config.PrimaryField}}"{{end}}>
+        {{t (printf "qor_admin.form.add_%v" (singular (meta_label .Meta))) (printf "Add %v" (singular (meta_label .Meta)))}}
+      </button>
+    {{else}}
+      <a href="javascript://" class="mdl-button mdl-button--primary qor-dragable__button-add" data-select-modal="many" {{if .InputId}}data-select-id="#{{.InputId}}"{{end}} data-selectmany-url="{{url_for .Meta.Config.RemoteDataResource}}" {{if .Meta.Config.PrimaryField}}data-remote-data-primary-key="{{.Meta.Config.PrimaryField}}"{{end}}>
+        {{t (printf "qor_admin.form.add_%v" (singular (meta_label .Meta))) (printf "Add %v" (singular (meta_label .Meta)))}}
+      </a>
+
+      <button class="mdl-button mdl-button--primary mdl-js-button mdl-js-ripple-effect qor-dragable__button-add" type="button">
+        {{t (printf "qor_admin.form.add_%v" (singular (meta_label .Meta))) (printf "Add %v" (singular (meta_label .Meta)))}}
+      </button>
+    {{end}}
 
     <select class="qor-field__input" data-toggle="qor.chooser.sortable" data-placeholder="{{t "qor_admin.form.enter_search_term" "Enter Search Term"}}" {{if not (has_update_permission .Meta)}}disabled{{end}} multiple {{if .Meta.Config.RemoteDataResource}}data-ajax--url="{{url_for .Meta.Config.RemoteDataResource}}" data-remote-data="true" {{if .Meta.Config.PrimaryField}}data-remote-data-primary-key="{{.Meta.Config.PrimaryField}}"{{end}}{{end}}>
       {{if .Meta.Config.RemoteDataResource}}
