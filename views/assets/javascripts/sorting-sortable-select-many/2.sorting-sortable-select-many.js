@@ -169,6 +169,9 @@
                 $tr = data.$clickElement,
                 $td = $tr.find('td:first');
 
+            console.log('onSelectResults data:');
+            console.log(data);
+
             if (remoteDataPrimaryKey) {
                 obj.id = data[remoteDataPrimaryKey];
             } else {
@@ -176,6 +179,9 @@
             }
 
             obj.value = data.Name || data.text || data.Text || data.Title || data.Code || obj.id;
+
+            console.log('onSelectResults obj');
+            console.log(obj);
 
             if (!$(CLASS_SORTABLE).find('li[data-index="' + obj.id + '"]').length) {
                 this.addItems(obj);
