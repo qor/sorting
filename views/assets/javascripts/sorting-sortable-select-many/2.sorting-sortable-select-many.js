@@ -13,12 +13,12 @@
 
     'use strict';
 
+    var $body = $('body');
     var NAMESPACE = 'qor.chooser.sortable';
     var EVENT_ENABLE = 'enable.' + NAMESPACE;
     var EVENT_CLICK = 'click.' + NAMESPACE;
     var EVENT_DISABLE = 'disable.' + NAMESPACE;
     var CLASS_CHOSE = '.select2-selection__choice';
-    var CLASS_CHOSE_REMOVE = '.select2-selection__choice__remove';
     var CLASS_CHOSE_CONTAINER = '.select2-container';
     var CLASS_CHOSE_INPUT = '.select2-search__field';
     var CLASS_SORTABLE_BODY = '.qor-dragable';
@@ -27,7 +27,10 @@
     var CLASS_SORTABLE_DELETE = '.qor-dragable__list-delete';
     var CLASS_SORTABLE_DATA = '.qor-dragable__list-data';
     var CLASS_SORTABLE_BUTTON_ADD = '.qor-dragable__button-add';
+    var CLASS_BOTTOMSHEETS = '.qor-bottomsheets';
     var IS_LOADED = 'sortable-select-many-loaded';
+    var CLASS_MANY = 'qor-bottomsheets__select-many';
+    var CLASS_SELECTED = 'is_selected';
 
     function QorChooserSortable(element, options) {
         this.$element = $(element);
@@ -88,29 +91,32 @@
                 };
             }
 
-            $this.on('change', function() {
+            if ($this.is('select')) {
 
-                    setTimeout(function() {
-                        $parent.find(CLASS_CHOSE).hide();
-                    }, 1);
+                $this.on('change', function() {
 
-                    $(CLASS_CHOSE_INPUT).attr('placeholder', placeholderText);
-                })
-                .on('select2:select', function(e) {
-                    self.addItems(e.params.data);
-                })
-                .on('select2:unselect', function(e) {
-                    self.removeItems(e.params.data);
-                });
+                        setTimeout(function() {
+                            $parent.find(CLASS_CHOSE).hide();
+                        }, 1);
 
-            $this.select2(option);
+                        $(CLASS_CHOSE_INPUT).attr('placeholder', placeholderText);
+                    })
+                    .on('select2:select', function(e) {
+                        console.log(e.params.data);
+                        self.addItems(e.params.data);
+                    })
+                    .on('select2:unselect', function(e) {
+                        self.removeItems(e.params.data);
+                    });
 
-            $parent.find(CLASS_CHOSE_CONTAINER).hide();
-            $parent.find(CLASS_CHOSE).hide();
-            $(CLASS_CHOSE_INPUT).attr('placeholder', placeholderText);
+                $this.select2(option);
+
+                $parent.find(CLASS_CHOSE_CONTAINER).hide();
+                $parent.find(CLASS_CHOSE).hide();
+                $(CLASS_CHOSE_INPUT).attr('placeholder', placeholderText);
+            }
 
             this.bind();
-
         },
 
         bind: function() {
@@ -122,13 +128,92 @@
         },
 
         show: function() {
-            var $container = this.$parent.find(CLASS_CHOSE_CONTAINER);
+            var $btn = this.$parent.find('.qor-dragable__button-add');
 
-            $container.show();
-            this.$parent.find(CLASS_SORTABLE_BUTTON_ADD).hide();
-            setTimeout(function() {
-                $container.find(CLASS_CHOSE_INPUT).click();
-            }, 100);
+            if ($btn.attr('data-selectmany-url')) {
+                var data = $btn.data();
+
+                this.BottomSheets = $body.data('qor.bottomsheets');
+                this.selectedIconTmpl = $('[name="select-many-selected-icon"]').html();
+                data.url = data.selectmanyUrl;
+                this.BottomSheets.open(data, this.handleBottomSelect.bind(this));
+
+            } else {
+                var $container = this.$parent.find(CLASS_CHOSE_CONTAINER);
+
+                $container.show();
+                this.$parent.find(CLASS_SORTABLE_BUTTON_ADD).hide();
+                setTimeout(function() {
+                    $container.find(CLASS_CHOSE_INPUT).click();
+                }, 100);
+
+            }
+        },
+
+        handleBottomSelect: function() {
+            var $bottomsheets = $(CLASS_BOTTOMSHEETS),
+                options = {
+                    onSelect: this.onSelectResults.bind(this), // render selected item after click item lists
+                    onSubmit: this.onSubmitResults.bind(this) // render new items after new item form submitted
+                };
+
+            $bottomsheets.qorSelectCore(options).addClass(CLASS_MANY);
+            this.initItems();
+        },
+
+        onSelectResults: function(data) {
+            let $tr = data.$clickElement,
+                $td = $tr.find('td:first'),
+                obj = this.collectData(data);
+
+            if (!$(CLASS_SORTABLE).find('li[data-index="' + obj.id + '"]').length) {
+                this.addItems(obj);
+                $tr.addClass(CLASS_SELECTED);
+                $td.append(this.selectedIconTmpl);
+            } else {
+                this.removeItems(obj);
+                $tr.removeClass(CLASS_SELECTED);
+                $td.find('.qor-select__select-icon').remove();
+            }
+        },
+
+        onSubmitResults: function(data) {
+            this.addItems(this.collectData(data), true);
+        },
+
+        collectData: function(data) {
+            // Handle data for sortable
+            let remoteDataPrimaryKey = this.$element.data('remote-data-primary-key'),
+                obj = {};
+
+            obj.id = data[remoteDataPrimaryKey] || data.primaryKey || data.Id || data.ID;
+            obj.value = data.Name || data.text || data.Text || data.Title || data.Code || obj.id;
+
+            return obj;
+        },
+
+        initItems: function() {
+            var $tr = $(CLASS_BOTTOMSHEETS).find('tbody tr'),
+                selectedIconTmpl = this.selectedIconTmpl,
+                selectedIDs = [],
+                primaryKey,
+                $selectedItems = this.$sortableList.find('[data-index]');
+
+            $selectedItems.each(function() {
+                selectedIDs.push($(this).data('index'));
+            });
+
+            $tr.each(function() {
+                var $this = $(this),
+                    $td = $this.find('td:first');
+
+                primaryKey = $this.data().primaryKey;
+
+                if (selectedIDs.indexOf(primaryKey) != '-1') {
+                    $this.addClass(CLASS_SELECTED);
+                    $td.append(selectedIconTmpl);
+                }
+            });
         },
 
         renderItem: function(data) {
@@ -137,7 +222,7 @@
 
         renderOption: function() {
             var indexArr = this.sortable.toArray();
-            var $selector = this.$selector;
+            var $selector = this.$parent.find(CLASS_SORTABLE_DATA);
 
             $selector.empty();
 
@@ -149,19 +234,22 @@
         },
 
         removeItems: function(data) {
+
             $(CLASS_SORTABLE).find('li[data-index="' + data.id + '"]').remove();
             this.renderOption();
         },
 
-        removeItemsFromList: function(index) {
-            this.$parent.find(CLASS_CHOSE).filter('[option-id="' + index + '"]').find(CLASS_CHOSE_REMOVE).click();
+        removeItemsFromList: function() {
             this.renderOption();
         },
 
-        addItems: function(data) {
-            data.value = data.Name || data.text || data.Text || data.Title || data.Code || data.Id || data.ID;
+        addItems: function(data, isNewData) {
             this.$sortableList.append(this.renderItem(data));
             this.renderOption();
+
+            if (isNewData) {
+                this.BottomSheets.hide();
+            }
         },
 
         destroy: function() {
@@ -199,7 +287,7 @@
     };
 
     $(function() {
-        var selector = 'select[data-toggle="qor.chooser.sortable"]';
+        var selector = '[data-toggle="qor.chooser.sortable"]';
 
         if ($('body').data(IS_LOADED)) {
             return;
