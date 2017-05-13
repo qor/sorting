@@ -162,15 +162,9 @@
         },
 
         onSelectResults: function(data) {
-
-            // Handle data for sortable
-            let remoteDataPrimaryKey = this.$element.data('remote-data-primary-key'),
-                obj = {},
-                $tr = data.$clickElement,
-                $td = $tr.find('td:first');
-
-            obj.id = data[remoteDataPrimaryKey] || data.primaryKey || data.Id || data.ID;
-            obj.value = data.Name || data.text || data.Text || data.Title || data.Code || obj.id;
+            let $tr = data.$clickElement,
+                $td = $tr.find('td:first'),
+                obj = this.collectData(data);
 
             if (!$(CLASS_SORTABLE).find('li[data-index="' + obj.id + '"]').length) {
                 this.addItems(obj);
@@ -184,7 +178,18 @@
         },
 
         onSubmitResults: function(data) {
-            this.addItems(data, true);
+            this.addItems(this.collectData(data), true);
+        },
+
+        collectData: function(data) {
+            // Handle data for sortable
+            let remoteDataPrimaryKey = this.$element.data('remote-data-primary-key'),
+                obj = {};
+
+            obj.id = data[remoteDataPrimaryKey] || data.primaryKey || data.Id || data.ID;
+            obj.value = data.Name || data.text || data.Text || data.Title || data.Code || obj.id;
+
+            return obj;
         },
 
         initItems: function() {
