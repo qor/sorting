@@ -134,6 +134,7 @@
                 var data = $btn.data();
 
                 this.BottomSheets = $body.data('qor.bottomsheets');
+                this.selectedIconTmpl = $('[name="select-many-selected-icon"]').html();
                 data.url = data.selectmanyUrl;
                 this.BottomSheets.open(data, this.handleBottomSelect.bind(this));
 
@@ -163,22 +164,27 @@
         onSelectResults: function(data) {
 
             // Handle data for sortable
-            // data.value = data.Name || data.text || data.Text || data.Title || data.Code || data.Id || data.ID || data[Object.keys(data)[0]];
             let remoteDataPrimaryKey = this.$element.data('remote-data-primary-key'),
-                obj = {};
+                obj = {},
+                $tr = data.$clickElement,
+                $td = $tr.find('td:first');
 
             if (remoteDataPrimaryKey) {
                 obj.id = data[remoteDataPrimaryKey];
             } else {
-                obj.id = data.Id || data.ID || data.primaryKey;
+                obj.id = data.primaryKey || data.Id || data.ID;
             }
 
             obj.value = data.Name || data.text || data.Text || data.Title || data.Code || obj.id;
 
             if (!$(CLASS_SORTABLE).find('li[data-index="' + obj.id + '"]').length) {
                 this.addItems(obj);
+                $tr.addClass(CLASS_SELECTED);
+                $td.append(this.selectedIconTmpl);
             } else {
                 this.removeItems(obj);
+                $tr.removeClass(CLASS_SELECTED);
+                $td.find('.qor-select__select-icon').remove();
             }
         },
 
@@ -188,7 +194,7 @@
 
         initItems: function() {
             var $tr = $(CLASS_BOTTOMSHEETS).find('tbody tr'),
-                selectedIconTmpl = $('[name="select-many-selected-icon"]').html(),
+                selectedIconTmpl = this.selectedIconTmpl,
                 selectedIDs = [],
                 primaryKey,
                 $selectedItems = this.$sortableList.find('[data-index]');
