@@ -63,7 +63,7 @@
       <script name="select-many-selected-icon" type="x-tmpl-mustache">
         <span class="qor-select__select-icon"><i class="material-icons">check_circle</i></span>
       </script>
-      <button class="mdl-button mdl-button--primary mdl-js-button qor-dragable__button-add" data-toggle="qor.chooser.sortable" type="button" data-select-modal="many" {{if .InputId}}data-select-id="#{{.InputId}}"{{end}} data-selectmany-url="{{url_for .Meta.Config.RemoteDataResource}}" {{if .Meta.Config.PrimaryField}}data-remote-data-primary-key="{{.Meta.Config.PrimaryField}}"{{end}}>
+      <button class="mdl-button mdl-button--primary mdl-js-button qor-dragable__button-add" data-toggle="qor.chooser.sortable" type="button" data-select-nohint="true" data-select-modal="many" {{if .InputId}}data-select-id="#{{.InputId}}"{{end}} data-selectmany-url="{{url_for .Meta.Config.RemoteDataResource}}" {{if .Meta.Config.PrimaryField}}data-remote-data-primary-key="{{.Meta.Config.PrimaryField}}"{{end}}>
         {{t (printf "qor_admin.form.add_%v" (singular (meta_label .Meta))) (printf "Add %v" (singular (meta_label .Meta)))}}
       </button>
     {{else}}
