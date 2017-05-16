@@ -13,24 +13,25 @@
 
     'use strict';
 
-    var $body = $('body');
-    var NAMESPACE = 'qor.chooser.sortable';
-    var EVENT_ENABLE = 'enable.' + NAMESPACE;
-    var EVENT_CLICK = 'click.' + NAMESPACE;
-    var EVENT_DISABLE = 'disable.' + NAMESPACE;
-    var CLASS_CHOSE = '.select2-selection__choice';
-    var CLASS_CHOSE_CONTAINER = '.select2-container';
-    var CLASS_CHOSE_INPUT = '.select2-search__field';
-    var CLASS_SORTABLE_BODY = '.qor-dragable';
-    var CLASS_SORTABLE = '.qor-dragable__list';
-    var CLASS_SORTABLE_HANDLE = '.qor-dragable__list-handle';
-    var CLASS_SORTABLE_DELETE = '.qor-dragable__list-delete';
-    var CLASS_SORTABLE_DATA = '.qor-dragable__list-data';
-    var CLASS_SORTABLE_BUTTON_ADD = '.qor-dragable__button-add';
-    var CLASS_BOTTOMSHEETS = '.qor-bottomsheets';
-    var IS_LOADED = 'sortable-select-many-loaded';
-    var CLASS_MANY = 'qor-bottomsheets__select-many';
-    var CLASS_SELECTED = 'is_selected';
+    let $body = $('body'),
+        NAMESPACE = 'qor.chooser.sortable',
+        EVENT_ENABLE = 'enable.' + NAMESPACE,
+        EVENT_CLICK = 'click.' + NAMESPACE,
+        EVENT_DISABLE = 'disable.' + NAMESPACE,
+        CLASS_CHOSE = '.select2-selection__choice',
+        CLASS_CHOSE_CONTAINER = '.select2-container',
+        CLASS_CHOSE_INPUT = '.select2-search__field',
+        CLASS_SORTABLE_BODY = '.qor-dragable',
+        CLASS_SORTABLE = '.qor-dragable__list',
+        CLASS_SORTABLE_HANDLE = '.qor-dragable__list-handle',
+        CLASS_SORTABLE_DELETE = '.qor-dragable__list-delete',
+        CLASS_SORTABLE_DATA = '.qor-dragable__list-data',
+        CLASS_SORTABLE_BUTTON_ADD = '.qor-dragable__button-add',
+        CLASS_BOTTOMSHEETS = '.qor-bottomsheets',
+        IS_LOADED = 'sortable-select-many-loaded',
+        CLASS_MANY = 'qor-bottomsheets__select-many',
+        CLASS_SELECTED = 'is_selected',
+        CLASS_SORTABLE_MANY = '[data-select-modal="many_sortable"]';
 
     function QorChooserSortable(element, options) {
         this.$element = $(element);
@@ -121,33 +122,38 @@
 
         bind: function() {
             this.$parent.on(EVENT_CLICK, CLASS_SORTABLE_BUTTON_ADD, this.show.bind(this));
+            $(document).on(EVENT_CLICK, CLASS_SORTABLE_MANY, this.openSortable.bind(this));
         },
 
         unbind: function() {
             this.$parent.off(EVENT_CLICK, CLASS_SORTABLE_BUTTON_ADD, this.show);
+            $(document).off(EVENT_CLICK, CLASS_SORTABLE_MANY, this.openSortable);
+        },
+
+        openSortable: function(e) {
+            let data = $(e.target).data();
+
+            this.BottomSheets = $body.data('qor.bottomsheets');
+            this.selectedIconTmpl = $('[name="select-many-selected-icon"]').html();
+
+            data.url = data.selectListingUrl;
+
+            if (data.selectDefaultCreating) {
+                data.url = data.selectCreatingUrl;
+            }
+
+            this.BottomSheets.open(data, this.handleBottomSelect.bind(this));
         },
 
         show: function() {
-            var $btn = this.$parent.find('.qor-dragable__button-add');
+            let $container = this.$parent.find(CLASS_CHOSE_CONTAINER);
 
-            if ($btn.attr('data-selectmany-url')) {
-                var data = $btn.data();
+            $container.show();
+            this.$parent.find(CLASS_SORTABLE_BUTTON_ADD).hide();
+            setTimeout(function() {
+                $container.find(CLASS_CHOSE_INPUT).click();
+            }, 100);
 
-                this.BottomSheets = $body.data('qor.bottomsheets');
-                this.selectedIconTmpl = $('[name="select-many-selected-icon"]').html();
-                data.url = data.selectmanyUrl;
-                this.BottomSheets.open(data, this.handleBottomSelect.bind(this));
-
-            } else {
-                var $container = this.$parent.find(CLASS_CHOSE_CONTAINER);
-
-                $container.show();
-                this.$parent.find(CLASS_SORTABLE_BUTTON_ADD).hide();
-                setTimeout(function() {
-                    $container.find(CLASS_CHOSE_INPUT).click();
-                }, 100);
-
-            }
         },
 
         handleBottomSelect: function() {
