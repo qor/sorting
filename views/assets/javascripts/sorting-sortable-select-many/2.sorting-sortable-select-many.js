@@ -136,6 +136,8 @@
             this.BottomSheets = $body.data('qor.bottomsheets');
             this.selectedIconTmpl = $('[name="select-many-selected-icon"]').html();
 
+            data.ingoreSubmit = true;
+
             data.url = data.selectListingUrl;
 
             if (data.selectDefaultCreating) {
