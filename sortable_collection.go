@@ -104,7 +104,9 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 					if selectManyConfig.SelectMode == "" {
 						selectManyConfig.SelectMode = "select"
 					}
-					selectManyConfig.SelectionTemplate = "metas/form/sortable_select_many.tmpl"
+					if selectManyConfig.SelectionTemplate == "" {
+						selectManyConfig.SelectionTemplate = "metas/form/sortable_select_many.tmpl"
+					}
 				}
 
 				setter := sortableMeta.GetSetter()
@@ -129,7 +131,9 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 
 			if sortableMeta.Type == "collection_edit" {
 				if collectionEditConfig, ok := sortableMeta.Config.(*admin.CollectionEditConfig); ok {
-					collectionEditConfig.Template = "metas/form/sortable_collection_edit.tmpl"
+					if collectionEditConfig.Template == "" {
+						collectionEditConfig.Template = "metas/form/sortable_collection_edit.tmpl"
+					}
 				}
 
 				valuer := sortableMeta.GetValuer()
