@@ -103,7 +103,6 @@
                         $(CLASS_CHOSE_INPUT).attr('placeholder', placeholderText);
                     })
                     .on('select2:select', function(e) {
-                        console.log(e.params.data);
                         self.addItems(e.params.data);
                     })
                     .on('select2:unselect', function(e) {
