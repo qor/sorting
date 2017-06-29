@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/jinzhu/gorm"
+	"github.com/qor/l10n"
 )
 
 func initalizePosition(scope *gorm.Scope) {
@@ -25,7 +26,7 @@ func reorderPositions(scope *gorm.Scope) {
 			var additionalSQL []string
 			var additionalValues []interface{}
 			// with l10n
-			if locale, ok := scope.DB().Get("l10n:locale"); ok && locale.(string) != "" {
+			if locale, ok := scope.DB().Get("l10n:locale"); ok && locale.(string) != "" && l10n.IsLocalizable(scope) {
 				additionalSQL = append(additionalSQL, "language_code = ?")
 				additionalValues = append(additionalValues, locale)
 			}
