@@ -1,4 +1,4 @@
-(function(factory) {
+(function (factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as anonymous module.
         define(['jquery'], factory);
@@ -9,7 +9,7 @@
         // Browser globals.
         factory(jQuery);
     }
-})(function($) {
+})(function ($) {
 
     'use strict';
 
@@ -42,7 +42,7 @@
     QorChooserSortable.prototype = {
         constructor: QorChooserSortable,
 
-        init: function() {
+        init: function () {
             var $this = this.$element,
                 select2Data = $this.data(),
                 $parent = $this.parents(CLASS_SORTABLE_BODY),
@@ -65,14 +65,14 @@
                 filter: CLASS_SORTABLE_DELETE,
                 dataIdAttr: 'data-index',
 
-                onFilter: function(e) {
+                onFilter: function (e) {
                     var $ele = $(e.item);
                     var eleIndex = $ele.data('index');
 
                     $ele.remove();
                     self.removeItemsFromList(eleIndex);
                 },
-                onUpdate: function() {
+                onUpdate: function () {
                     self.renderOption();
                 }
             });
@@ -80,12 +80,12 @@
             if (select2Data.remoteData) {
                 option.ajax = $.fn.select2.ajaxCommonOptions(select2Data);
 
-                option.templateResult = function(data) {
+                option.templateResult = function (data) {
                     var tmpl = $this.parents('.qor-field').find('[name="select2-result-template"]');
                     return $.fn.select2.ajaxFormatResult(data, tmpl);
                 };
 
-                option.templateSelection = function(data) {
+                option.templateSelection = function (data) {
                     if (data.loading) return data.text;
                     var tmpl = $this.parents('.qor-field').find('[name="select2-selection-template"]');
                     return $.fn.select2.ajaxFormatResult(data, tmpl);
@@ -94,18 +94,20 @@
 
             if ($this.is('select')) {
 
-                $this.on('change', function() {
+                $this.on('change', function () {
 
-                        setTimeout(function() {
-                            $parent.find(CLASS_CHOSE).hide();
-                        }, 1);
+                    setTimeout(function () {
+                        $parent.find(CLASS_CHOSE).hide();
+                    }, 1);
 
-                        $(CLASS_CHOSE_INPUT).attr('placeholder', placeholderText);
+                    $(CLASS_CHOSE_INPUT).attr('placeholder', placeholderText);
+                })
+                    .on('select2:select', function (e) {
+                        let data = e.params.data;
+                        data.value = data.Name || data.text || data.Text || data.Title || data.Code;
+                        self.addItems(data);
                     })
-                    .on('select2:select', function(e) {
-                        self.addItems(e.params.data);
-                    })
-                    .on('select2:unselect', function(e) {
+                    .on('select2:unselect', function (e) {
                         self.removeItems(e.params.data);
                     });
 
@@ -119,24 +121,23 @@
             this.bind();
         },
 
-        bind: function() {
+        bind: function () {
             this.$parent.on(EVENT_CLICK, CLASS_SORTABLE_BUTTON_ADD, this.show.bind(this));
             $(document).on(EVENT_CLICK, CLASS_SORTABLE_MANY, this.openSortable.bind(this));
         },
 
-        unbind: function() {
+        unbind: function () {
             this.$parent.off(EVENT_CLICK, CLASS_SORTABLE_BUTTON_ADD, this.show);
             $(document).off(EVENT_CLICK, CLASS_SORTABLE_MANY, this.openSortable);
         },
 
-        openSortable: function(e) {
+        openSortable: function (e) {
             let data = $(e.target).data();
 
             this.BottomSheets = $body.data('qor.bottomsheets');
             this.selectedIconTmpl = $('[name="select-many-selected-icon"]').html();
 
             data.ingoreSubmit = true;
-
             data.url = data.selectListingUrl;
 
             if (data.selectDefaultCreating) {
@@ -146,18 +147,18 @@
             this.BottomSheets.open(data, this.handleBottomSelect.bind(this));
         },
 
-        show: function() {
+        show: function () {
             let $container = this.$parent.find(CLASS_CHOSE_CONTAINER);
 
             $container.show();
             this.$parent.find(CLASS_SORTABLE_BUTTON_ADD).hide();
-            setTimeout(function() {
+            setTimeout(function () {
                 $container.find(CLASS_CHOSE_INPUT).click();
             }, 100);
 
         },
 
-        handleBottomSelect: function() {
+        handleBottomSelect: function () {
             var $bottomsheets = $(CLASS_BOTTOMSHEETS),
                 options = {
                     onSelect: this.onSelectResults.bind(this), // render selected item after click item lists
@@ -168,7 +169,7 @@
             this.initItems();
         },
 
-        onSelectResults: function(data) {
+        onSelectResults: function (data) {
             let $tr = data.$clickElement,
                 $td = $tr.find('td:first'),
                 obj = this.collectData(data);
@@ -184,11 +185,11 @@
             }
         },
 
-        onSubmitResults: function(data) {
+        onSubmitResults: function (data) {
             this.addItems(this.collectData(data), true);
         },
 
-        collectData: function(data) {
+        collectData: function (data) {
             // Handle data for sortable
             let remoteDataPrimaryKey = this.$element.data('remote-data-primary-key'),
                 obj = {};
@@ -199,18 +200,18 @@
             return obj;
         },
 
-        initItems: function() {
+        initItems: function () {
             var $tr = $(CLASS_BOTTOMSHEETS).find('tbody tr'),
                 selectedIconTmpl = this.selectedIconTmpl,
                 selectedIDs = [],
                 primaryKey,
                 $selectedItems = this.$sortableList.find('[data-index]');
 
-            $selectedItems.each(function() {
+            $selectedItems.each(function () {
                 selectedIDs.push($(this).data('index'));
             });
 
-            $tr.each(function() {
+            $tr.each(function () {
                 var $this = $(this),
                     $td = $this.find('td:first');
 
@@ -223,34 +224,34 @@
             });
         },
 
-        renderItem: function(data) {
+        renderItem: function (data) {
             return window.Mustache.render(QorChooserSortable.LIST_HTML, data);
         },
 
-        renderOption: function() {
+        renderOption: function () {
             var indexArr = this.sortable.toArray();
             var $selector = this.$parent.find(CLASS_SORTABLE_DATA);
 
             $selector.empty();
 
-            window._.each(indexArr, function(id) {
+            window._.each(indexArr, function (id) {
                 $selector.append(window.Mustache.render(QorChooserSortable.OPTION_HTML, ({
                     'value': id
                 })));
             });
         },
 
-        removeItems: function(data) {
+        removeItems: function (data) {
 
             $(CLASS_SORTABLE).find('li[data-index="' + data.id + '"]').remove();
             this.renderOption();
         },
 
-        removeItemsFromList: function() {
+        removeItemsFromList: function () {
             this.renderOption();
         },
 
-        addItems: function(data, isNewData) {
+        addItems: function (data, isNewData) {
             this.$sortableList.append(this.renderItem(data));
             this.renderOption();
 
@@ -259,7 +260,7 @@
             }
         },
 
-        destroy: function() {
+        destroy: function () {
             this.sortable.destroy();
             this.unbind();
             this.$element.select2('destroy').removeData(NAMESPACE);
@@ -272,8 +273,8 @@
 
     QorChooserSortable.OPTION_HTML = '<option selected value="[[value]]"></option>';
 
-    QorChooserSortable.plugin = function(options) {
-        return this.each(function() {
+    QorChooserSortable.plugin = function (options) {
+        return this.each(function () {
             var $this = $(this);
             var data = $this.data(NAMESPACE);
             var fn;
@@ -293,7 +294,7 @@
         });
     };
 
-    $(function() {
+    $(function () {
         var selector = '[data-toggle="qor.chooser.sortable"]';
 
         if ($('body').data(IS_LOADED)) {
@@ -303,13 +304,13 @@
         $('body').data(IS_LOADED, true);
 
         $(document).
-        on(EVENT_DISABLE, function(e) {
-            QorChooserSortable.plugin.call($(selector, e.target), 'destroy');
-        }).
-        on(EVENT_ENABLE, function(e) {
-            QorChooserSortable.plugin.call($(selector, e.target));
-        }).
-        triggerHandler(EVENT_ENABLE);
+            on(EVENT_DISABLE, function (e) {
+                QorChooserSortable.plugin.call($(selector, e.target), 'destroy');
+            }).
+            on(EVENT_ENABLE, function (e) {
+                QorChooserSortable.plugin.call($(selector, e.target));
+            }).
+            triggerHandler(EVENT_ENABLE);
     });
 
     return QorChooserSortable;
