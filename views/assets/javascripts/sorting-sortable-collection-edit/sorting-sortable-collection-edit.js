@@ -13,20 +13,21 @@
 
     'use strict';
 
-    var NAMESPACE = 'qor.collection.sortable';
-    var EVENT_ENABLE = 'enable.' + NAMESPACE;
-    var EVENT_DISABLE = 'disable.' + NAMESPACE;
-    var EVENT_CLICK = 'click.' + NAMESPACE;
-    var CLASS_ITEM = '.qor-sortable__item';
-    var CLASS_BUTTON_CHANGE = '.qor-sortable__button-change';
-    var CLASS_BUTTON_DONE = '.qor-sortable__button-done';
-    var CLASS_BUTTON_ADD = '.qor-sortable__button-add';
-    var CLASS_BUTTON_DELETE = '.qor-sortable__button-delete';
-    var CLASS_BUTTON_MOVE = '.qor-sortable__button-move';
-    var CLASS_ACTION = '.qor-sortable__action';
-    var CLASS_ACTION_POSITION = '.qor-sortable__action-position';
-    var IS_DELETE = '.is-delete';
-    var IS_LOADED = 'sortable-collection-loaded';
+    let NAMESPACE = 'qor.collection.sortable',
+        EVENT_ENABLE = 'enable.' + NAMESPACE,
+        EVENT_DISABLE = 'disable.' + NAMESPACE,
+        EVENT_CLICK = 'click.' + NAMESPACE,
+        CLASS_ITEM = '.qor-sortable__item',
+        CLASS_CHILDREN_ITEM = '> .qor-field__block > .qor-sortable__item',
+        CLASS_BUTTON_CHANGE = '>.qor-sortable__button > .qor-sortable__button-change',
+        CLASS_BUTTON_DONE = '>.qor-sortable__button > .qor-sortable__button-done',
+        CLASS_BUTTON_ADD = '> .qor-field__block > .qor-sortable__button-add',
+        CLASS_BUTTON_DELETE = '> .qor-sortable__button-delete',
+        CLASS_BUTTON_MOVE = '>.qor-field__block > .qor-sortable__item > .qor-sortable__change .qor-sortable__button-move',
+        CLASS_ACTION = '> .qor-sortable__change > .qor-sortable__action',
+        CLASS_ACTION_POSITION = '.qor-sortable__action-position',
+        CLASS_ITEM_FILTER = '.is-delete,.qor-fieldset--new',
+        IS_LOADED = 'sortable-collection-loaded';
 
     function QorCollectionSortable(element, options) {
         this.$element = $(element);
@@ -43,7 +44,10 @@
         },
 
         bind: function() {
-            this.$element.on(EVENT_CLICK, $.proxy(this.click, this));
+            this.$element
+                .on(EVENT_CLICK, CLASS_BUTTON_MOVE, this.moveItem.bind(this))
+                .on(EVENT_CLICK, CLASS_BUTTON_DONE, this.finishMoveItem.bind(this))
+                .on(EVENT_CLICK, CLASS_BUTTON_CHANGE, this.startMoveItem.bind(this));
         },
 
         unbind: function() {
@@ -51,7 +55,7 @@
         },
 
         initItemOrder: function(resetResource) {
-            var $item = this.$element.find(CLASS_ITEM).filter(':visible').not(IS_DELETE);
+            var $item = this.$element.find(CLASS_CHILDREN_ITEM).not(CLASS_ITEM_FILTER);
 
             // return false if no item
             if (!$item.size()) {
@@ -134,8 +138,8 @@
             });
         },
 
-        moveItem: function($ele) {
-            var $current = $ele.closest(CLASS_ITEM),
+        moveItem: function(e) {
+            let $current = $(e.target).closest(CLASS_ITEM),
                 currentPosition = $current.data().itemIndex,
                 targetPosition = $current.find(CLASS_ACTION_POSITION).val(),
                 insertPosition,
@@ -154,7 +158,7 @@
                 insertPosition = targetPosition;
             }
 
-            $target = this.$element.find(CLASS_ITEM).filter(function() {
+            $target = this.$element.find(CLASS_CHILDREN_ITEM).filter(function() {
                 return $(this).data().itemIndex == insertPosition;
             });
 
@@ -168,35 +172,41 @@
 
         },
 
-        click: function(e) {
-            var $target = $(e.target),
+        finishMoveItem: function(e) {
+            let $target = $(e.target),
                 $element = this.$element,
-                $item = $element.find(CLASS_ITEM).filter(':visible').not(IS_DELETE);
+                $item = $element.find(CLASS_CHILDREN_ITEM).not(CLASS_ITEM_FILTER),
+                $addButton = $element.find(CLASS_BUTTON_ADD),
+                $deleteButton = $item.find(CLASS_BUTTON_DELETE),
+                $actionButtons = $item.find(CLASS_ACTION);
 
-            if ($target.is(CLASS_BUTTON_MOVE)) {
-                this.moveItem($target);
+            $target.hide();
+            $actionButtons.hide();
+
+            $element.find(CLASS_BUTTON_CHANGE).show();
+            $addButton.show();
+            $deleteButton.show();
+        },
+
+        startMoveItem: function(e) {
+            let $target = $(e.target),
+                $element = this.$element,
+                $item = $element.find(CLASS_CHILDREN_ITEM).not(CLASS_ITEM_FILTER),
+                $addButton = $element.find(CLASS_BUTTON_ADD),
+                $deleteButton = $item.find(CLASS_BUTTON_DELETE),
+                $actionButtons = $item.find(CLASS_ACTION);
+
+            if(!$item.size()) {
+                return false;
             }
 
-            if ($target.is(CLASS_BUTTON_DONE)) {
-                $target.hide();
-                $element.find(CLASS_ACTION).hide();
+            $target.hide();
 
-                $element.find(CLASS_BUTTON_CHANGE).show();
-                $element.find(CLASS_BUTTON_ADD).show();
-                $element.find(CLASS_BUTTON_DELETE).show();
-            }
-
-            if ($target.is(CLASS_BUTTON_CHANGE) && $item.size()) {
-                $target.hide();
-
-                $element.find(CLASS_BUTTON_DONE).show();
-                $element.find(CLASS_ACTION).show();
-                $element.find(CLASS_BUTTON_ADD).hide();
-                $element.find(CLASS_BUTTON_DELETE).hide();
-
-                this.initItemOrder();
-            }
-
+            $element.find(CLASS_BUTTON_DONE).show();
+            $actionButtons.show();
+            $addButton.hide();
+            $deleteButton.hide();
+            this.initItemOrder();
         },
 
         destroy: function() {
