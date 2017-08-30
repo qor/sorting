@@ -1,4 +1,4 @@
-(function (factory) {
+(function(factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as anonymous module.
         define(['jquery'], factory);
@@ -9,8 +9,7 @@
         // Browser globals.
         factory(jQuery);
     }
-})(function ($) {
-
+})(function($) {
     'use strict';
 
     let NAMESPACE = 'qor.collection.sortable',
@@ -38,48 +37,47 @@
     QorCollectionSortable.prototype = {
         constructor: QorCollectionSortable,
 
-        init: function () {
+        init: function() {
             this.bind();
             this.initItemOrder();
         },
 
-        bind: function () {
+        bind: function() {
             this.$element
                 .on(EVENT_CLICK, CLASS_BUTTON_MOVE, this.moveItem.bind(this))
                 .on(EVENT_CLICK, CLASS_BUTTON_DONE, this.finishMoveItem.bind(this))
                 .on(EVENT_CLICK, CLASS_BUTTON_CHANGE, this.startMoveItem.bind(this));
         },
 
-        unbind: function () {
+        unbind: function() {
             this.$element
                 .off(EVENT_CLICK, CLASS_BUTTON_MOVE, this.moveItem.bind(this))
                 .off(EVENT_CLICK, CLASS_BUTTON_DONE, this.finishMoveItem.bind(this))
                 .off(EVENT_CLICK, CLASS_BUTTON_CHANGE, this.startMoveItem.bind(this));
         },
 
-        initItemOrder: function (resetResource) {
+        initItemOrder: function(resetResource) {
             var $item = this.$element.find(CLASS_CHILDREN_ITEM).not(CLASS_ITEM_FILTER);
 
             // return false if no item
-            if (!$item.size()) {
+            if (!$item.length) {
                 return;
             }
 
             var $select = $item.find(CLASS_ACTION).find(CLASS_ACTION_POSITION),
                 orderData = {},
-                itemTotal = $item.size(),
+                itemTotal = $item.length,
                 template = $item.first().html(),
                 fullResourceName,
                 resourceNamePrefix;
 
-            if ($select.size()) {
+            if ($select.length) {
                 $select.remove();
             }
 
             if (!resourceNamePrefix) {
                 fullResourceName = template.match(/(\w+)\="(\S*\[\d+\]\S*)"/); // get results : [attribute, name, value]
                 if (fullResourceName.length) {
-
                     fullResourceName = fullResourceName[2];
                     resourceNamePrefix = fullResourceName.match(/^(\S*)\[(\d+)\]([^\[\]]*)$/); // get results : [input, prefix, index, suffix]
 
@@ -87,10 +85,9 @@
                         resourceNamePrefix = resourceNamePrefix[1];
                     }
                 }
-
             }
 
-            $item.each(function (index) {
+            $item.each(function(index) {
                 var $this = $(this),
                     $action = $this.find(CLASS_ACTION);
 
@@ -102,7 +99,7 @@
 
                 for (var i = 1; i <= itemTotal; i++) {
                     orderData.index = i;
-                    (orderData.itemIndex == i) ? (orderData.isSelected = true) : (orderData.isSelected = false);
+                    orderData.itemIndex == i ? (orderData.isSelected = true) : (orderData.isSelected = false);
                     $action.find('select').append(window.Mustache.render(QorCollectionSortable.OPTION_HTML, orderData));
                 }
 
@@ -118,7 +115,7 @@
                         return;
                     }
 
-                    $resource.each(function () {
+                    $resource.each(function() {
                         resourceName = $(this).prop('name');
                         resourceNameEnd = resourceName.match(/\.\w+$/);
                         newPosition = `[${orderData.itemIndex}]`;
@@ -137,17 +134,15 @@
                 }
 
                 $this.data(orderData);
-
             });
         },
 
-        moveItem: function (e) {
+        moveItem: function(e) {
             let $current = $(e.target).closest(CLASS_ITEM),
                 currentPosition = $current.data().itemIndex,
                 targetPosition = $current.find(CLASS_ACTION_POSITION).val(),
                 insertPosition,
                 $target;
-
 
             if (targetPosition == currentPosition) {
                 return;
@@ -161,7 +156,7 @@
                 insertPosition = targetPosition;
             }
 
-            $target = this.$element.find(CLASS_CHILDREN_ITEM).filter(function () {
+            $target = this.$element.find(CLASS_CHILDREN_ITEM).filter(function() {
                 return $(this).data().itemIndex == insertPosition;
             });
 
@@ -172,10 +167,9 @@
             }
 
             this.initItemOrder(true);
-
         },
 
-        finishMoveItem: function (e) {
+        finishMoveItem: function(e) {
             let $target = $(e.target),
                 $element = this.$element,
                 $item = $element.find(CLASS_CHILDREN_ITEM).not(CLASS_ITEM_FILTER),
@@ -191,7 +185,7 @@
             $deleteButton.show();
         },
 
-        startMoveItem: function (e) {
+        startMoveItem: function(e) {
             let $target = $(e.target),
                 $element = this.$element,
                 $item = $element.find(CLASS_CHILDREN_ITEM).not(CLASS_ITEM_FILTER),
@@ -199,7 +193,7 @@
                 $deleteButton = $item.find(CLASS_BUTTON_DELETE),
                 $actionButtons = $item.find(CLASS_ACTION);
 
-            if (!$item.size()) {
+            if (!$item.length) {
                 return false;
             }
 
@@ -212,7 +206,7 @@
             this.initItemOrder();
         },
 
-        destroy: function () {
+        destroy: function() {
             this.unbind();
             this.$element.removeData(NAMESPACE);
         }
@@ -220,17 +214,16 @@
 
     QorCollectionSortable.DEFAULTS = {};
 
-    QorCollectionSortable.OPTION_HTML = '<option value="[[index]]" [[#isSelected]]selected[[/isSelected]]>[[index]] of [[itemTotal]]</option>';
+    QorCollectionSortable.OPTION_HTML =
+        '<option value="[[index]]" [[#isSelected]]selected[[/isSelected]]>[[index]] of [[itemTotal]]</option>';
 
-
-    QorCollectionSortable.plugin = function (options) {
-        return this.each(function () {
+    QorCollectionSortable.plugin = function(options) {
+        return this.each(function() {
             var $this = $(this);
             var data = $this.data(NAMESPACE);
             var fn;
 
             if (!data) {
-
                 if (/destroy/.test(options)) {
                     return;
                 }
@@ -238,13 +231,13 @@
                 $this.data(NAMESPACE, (data = new QorCollectionSortable(this, options)));
             }
 
-            if (typeof options === 'string' && $.isFunction(fn = data[options])) {
+            if (typeof options === 'string' && $.isFunction((fn = data[options]))) {
                 fn.apply(data);
             }
         });
     };
 
-    $(function () {
+    $(function() {
         var selector = '[data-toggle="qor.collection.sortable"]';
 
         if ($('body').data(IS_LOADED)) {
@@ -252,16 +245,15 @@
         }
         $('body').data(IS_LOADED, true);
 
-        $(document).
-            on(EVENT_DISABLE, function (e) {
+        $(document)
+            .on(EVENT_DISABLE, function(e) {
                 QorCollectionSortable.plugin.call($(selector, e.target), 'destroy');
-            }).
-            on(EVENT_ENABLE, function (e) {
+            })
+            .on(EVENT_ENABLE, function(e) {
                 QorCollectionSortable.plugin.call($(selector, e.target));
-            }).
-            triggerHandler(EVENT_ENABLE);
+            })
+            .triggerHandler(EVENT_ENABLE);
     });
 
     return QorCollectionSortable;
-
 });
