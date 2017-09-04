@@ -1,6 +1,6 @@
-.qor-sortable{
+.qor-sortable {
     position: relative;
-    .qor-sortable__action-position{
+    .qor-sortable__action-position {
         -webkit-appearance: none;
         appearance: none;
         width: 60px;
@@ -14,26 +14,41 @@
         text-indent: 5px;
     }
 
-    .qor-fieldset{
-        padding-top: 24px;
+    .qor-sortable__block {
+        display: flex;
+        flex-direction: column;
     }
-    .qor-sortable__button{
+
+    .qor-sortable__button-add {
+        order: 9999;
+        margin-top: 16px;
+    }
+
+    .qor-fieldset {
+        padding-top: 24px;
+        margin-bottom: 0;
+    }
+    .qor-sortable__button {
         position: absolute;
         top: 0;
         right: 0;
     }
-    .qor-sortable__change{
+    .qor-sortable__change {
         position: absolute;
         top: 12px;
         right: 24px;
     }
-    .qor-sortable__button button{
+    .qor-sortable__button button {
         padding: 0;
-        &:hover{
+        &:hover {
             background: none;
         }
     }
-    .qor-sortable__button button,.qor-sortable__button-move{
+    .qor-sortable__button-add {
+        flex-direction: column;
+    }
+    .qor-sortable__button button,
+    .qor-sortable__button-move {
         height: 24px;
         line-height: 24px;
         font-size: 12px;
