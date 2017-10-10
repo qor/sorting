@@ -168,6 +168,5 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 				meta.SetPermission(roles.Deny(roles.CRUD, roles.Anyone))
 			}
 		}
-
 	}
 }
