@@ -88,10 +88,22 @@ func (s *Sorting) ConfigureQorResourceBeforeInitialize(res resource.Resourcer) {
 func (s *Sorting) ConfigureQorResource(res resource.Resourcer) {
 	if res, ok := res.(*admin.Resource); ok {
 		Admin := res.GetAdmin()
-		res.IndexAttrs(res.IndexAttrs(), "Position")
-		res.NewAttrs(res.NewAttrs(), "-Position")
-		res.EditAttrs(res.EditAttrs(), "-Position")
-		res.ShowAttrs(res.ShowAttrs(), "-Position", false)
+
+		res.OverrideIndexAttrs(func() {
+			res.IndexAttrs(res.IndexAttrs(), "Position")
+		})
+
+		res.OverrideNewAttrs(func() {
+			res.NewAttrs(res.NewAttrs(), "-Position")
+		})
+
+		res.OverrideEditAttrs(func() {
+			res.EditAttrs(res.EditAttrs(), "-Position")
+		})
+
+		res.OverrideShowAttrs(func() {
+			res.ShowAttrs(res.ShowAttrs(), "-Position")
+		})
 
 		router := Admin.GetRouter()
 		router.Post(fmt.Sprintf("/%v/%v/sorting/update_position", res.ToParam(), res.ParamIDName()), updatePosition)
