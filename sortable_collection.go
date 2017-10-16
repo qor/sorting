@@ -145,19 +145,22 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 						return results
 					})
 
-					res.AddProcessor(func(record interface{}, metaValues *resource.MetaValues, context *qor.Context) error {
-						var primaryValues []string
-						reflectValue := reflect.Indirect(reflect.ValueOf(record))
-						fieldValue := reflect.Indirect(reflectValue.FieldByName(name))
-						if fieldValue.Kind() == reflect.Slice {
-							for i := 0; i < fieldValue.Len(); i++ {
-								scope := gorm.Scope{Value: fieldValue.Index(i).Interface()}
-								primaryValues = append(primaryValues, fmt.Sprint(scope.PrimaryKeyValue()))
+					res.AddProcessor(&resource.Processor{
+						Name: "sortable_collection_processor",
+						Handler: func(record interface{}, metaValues *resource.MetaValues, context *qor.Context) error {
+							var primaryValues []string
+							reflectValue := reflect.Indirect(reflect.ValueOf(record))
+							fieldValue := reflect.Indirect(reflectValue.FieldByName(name))
+							if fieldValue.Kind() == reflect.Slice {
+								for i := 0; i < fieldValue.Len(); i++ {
+									scope := gorm.Scope{Value: fieldValue.Index(i).Interface()}
+									primaryValues = append(primaryValues, fmt.Sprint(scope.PrimaryKeyValue()))
+								}
+								reflectValue.FieldByName(meta.GetName()).Addr().Interface().(*SortableCollection).Scan(primaryValues)
 							}
-							reflectValue.FieldByName(meta.GetName()).Addr().Interface().(*SortableCollection).Scan(primaryValues)
-						}
 
-						return nil
+							return nil
+						},
 					})
 
 					meta.SetSetter(func(record interface{}, metaValue *resource.MetaValue, context *qor.Context) {
