@@ -99,78 +99,81 @@ func (sortableCollection *SortableCollection) ConfigureQorMeta(metaor resource.M
 		res.UseTheme("sortable_collection")
 
 		if sortableMeta != nil {
-			sortableMeta.AddProcessor(func(sortableMeta *admin.Meta) {
-				if sortableMeta.Type == "select_many" {
-					if selectManyConfig, ok := sortableMeta.Config.(*admin.SelectManyConfig); ok {
-						if selectManyConfig.SelectMode == "" {
-							selectManyConfig.SelectMode = "select"
-						}
-						if selectManyConfig.SelectionTemplate == "" {
-							selectManyConfig.SelectionTemplate = "metas/form/sortable_select_many.tmpl"
-						}
-					}
-
-					setter := sortableMeta.GetSetter()
-					sortableMeta.SetSetter(func(record interface{}, metaValue *resource.MetaValue, context *qor.Context) {
-						primaryKeys := utils.ToArray(metaValue.Value)
-						reflectValue := reflect.Indirect(reflect.ValueOf(record))
-						reflectValue.FieldByName(meta.GetName()).Addr().Interface().(*SortableCollection).Scan(primaryKeys)
-						setter(record, metaValue, context)
-					})
-
-					valuer := sortableMeta.GetValuer()
-					sortableMeta.SetValuer(func(record interface{}, context *qor.Context) interface{} {
-						results := valuer(record, context)
-						reflectValue := reflect.Indirect(reflect.ValueOf(record))
-						reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).Sort(results)
-						return results
-					})
-
-					meta.SetSetter(func(interface{}, *resource.MetaValue, *qor.Context) {})
-					meta.SetPermission(roles.Deny(roles.CRUD, roles.Anyone))
-				}
-
-				if sortableMeta.Type == "collection_edit" {
-					if collectionEditConfig, ok := sortableMeta.Config.(*admin.CollectionEditConfig); ok {
-						if collectionEditConfig.Template == "" {
-							collectionEditConfig.Template = "metas/form/sortable_collection_edit.tmpl"
-						}
-					}
-
-					valuer := sortableMeta.GetValuer()
-					sortableMeta.SetValuer(func(record interface{}, context *qor.Context) interface{} {
-						results := valuer(record, context)
-						reflectValue := reflect.Indirect(reflect.ValueOf(record))
-						reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).Sort(results)
-						return results
-					})
-
-					res.AddProcessor(&resource.Processor{
-						Name: "sortable_collection_processor",
-						Handler: func(record interface{}, metaValues *resource.MetaValues, context *qor.Context) error {
-							var primaryValues []string
-							reflectValue := reflect.Indirect(reflect.ValueOf(record))
-							fieldValue := reflect.Indirect(reflectValue.FieldByName(name))
-							if fieldValue.Kind() == reflect.Slice {
-								for i := 0; i < fieldValue.Len(); i++ {
-									scope := gorm.Scope{Value: fieldValue.Index(i).Interface()}
-									primaryValues = append(primaryValues, fmt.Sprint(scope.PrimaryKeyValue()))
-								}
-								reflectValue.FieldByName(meta.GetName()).Addr().Interface().(*SortableCollection).Scan(primaryValues)
+			sortableMeta.AddProcessor(&admin.MetaProcessor{
+				Name: "sortable-collection-meta-processor",
+				Handler: func(sortableMeta *admin.Meta) {
+					if sortableMeta.Type == "select_many" {
+						if selectManyConfig, ok := sortableMeta.Config.(*admin.SelectManyConfig); ok {
+							if selectManyConfig.SelectMode == "" {
+								selectManyConfig.SelectMode = "select"
 							}
+							if selectManyConfig.SelectionTemplate == "" {
+								selectManyConfig.SelectionTemplate = "metas/form/sortable_select_many.tmpl"
+							}
+						}
 
-							return nil
-						},
-					})
+						setter := sortableMeta.GetSetter()
+						sortableMeta.SetSetter(func(record interface{}, metaValue *resource.MetaValue, context *qor.Context) {
+							primaryKeys := utils.ToArray(metaValue.Value)
+							reflectValue := reflect.Indirect(reflect.ValueOf(record))
+							reflectValue.FieldByName(meta.GetName()).Addr().Interface().(*SortableCollection).Scan(primaryKeys)
+							setter(record, metaValue, context)
+						})
 
-					meta.SetSetter(func(record interface{}, metaValue *resource.MetaValue, context *qor.Context) {
-						primaryKeys := utils.ToArray(metaValue.Value)
-						reflectValue := reflect.Indirect(reflect.ValueOf(record))
-						reflectValue.FieldByName(meta.GetName()).Addr().Interface().(*SortableCollection).Scan(primaryKeys)
-					})
+						valuer := sortableMeta.GetValuer()
+						sortableMeta.SetValuer(func(record interface{}, context *qor.Context) interface{} {
+							results := valuer(record, context)
+							reflectValue := reflect.Indirect(reflect.ValueOf(record))
+							reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).Sort(results)
+							return results
+						})
 
-					meta.SetPermission(roles.Deny(roles.CRUD, roles.Anyone))
-				}
+						meta.SetSetter(func(interface{}, *resource.MetaValue, *qor.Context) {})
+						meta.SetPermission(roles.Deny(roles.CRUD, roles.Anyone))
+					}
+
+					if sortableMeta.Type == "collection_edit" {
+						if collectionEditConfig, ok := sortableMeta.Config.(*admin.CollectionEditConfig); ok {
+							if collectionEditConfig.Template == "" {
+								collectionEditConfig.Template = "metas/form/sortable_collection_edit.tmpl"
+							}
+						}
+
+						valuer := sortableMeta.GetValuer()
+						sortableMeta.SetValuer(func(record interface{}, context *qor.Context) interface{} {
+							results := valuer(record, context)
+							reflectValue := reflect.Indirect(reflect.ValueOf(record))
+							reflectValue.FieldByName(meta.GetName()).Interface().(SortableCollection).Sort(results)
+							return results
+						})
+
+						res.AddProcessor(&resource.Processor{
+							Name: "sortable_collection_processor",
+							Handler: func(record interface{}, metaValues *resource.MetaValues, context *qor.Context) error {
+								var primaryValues []string
+								reflectValue := reflect.Indirect(reflect.ValueOf(record))
+								fieldValue := reflect.Indirect(reflectValue.FieldByName(name))
+								if fieldValue.Kind() == reflect.Slice {
+									for i := 0; i < fieldValue.Len(); i++ {
+										scope := gorm.Scope{Value: fieldValue.Index(i).Interface()}
+										primaryValues = append(primaryValues, fmt.Sprint(scope.PrimaryKeyValue()))
+									}
+									reflectValue.FieldByName(meta.GetName()).Addr().Interface().(*SortableCollection).Scan(primaryValues)
+								}
+
+								return nil
+							},
+						})
+
+						meta.SetSetter(func(record interface{}, metaValue *resource.MetaValue, context *qor.Context) {
+							primaryKeys := utils.ToArray(metaValue.Value)
+							reflectValue := reflect.Indirect(reflect.ValueOf(record))
+							reflectValue.FieldByName(meta.GetName()).Addr().Interface().(*SortableCollection).Scan(primaryKeys)
+						})
+
+						meta.SetPermission(roles.Deny(roles.CRUD, roles.Anyone))
+					}
+				},
 			})
 		}
 	}
