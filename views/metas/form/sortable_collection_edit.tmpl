@@ -1,6 +1,7 @@
+{{$metaConfig := .Meta.Config}}
 {{$current_values := (raw_value_of .ResourceValue .Meta)}}
 
-<div class="qor-field collection-edit qor-fieldset-container qor-sortable qor-fieldset-sortable" data-toggle="qor.collection.sortable">
+<div class="qor-field collection-edit qor-fieldset-container qor-sortable qor-fieldset-sortable" data-toggle="qor.collection.sortable" {{if $metaConfig.Max}}data-max-item="{{$metaConfig.Max}}" data-max-item-hint="Up to {{$metaConfig.Max}} {{meta_label .Meta}}"{{end}}>
   <label class="qor-field__label" for="{{.InputId}}">
     {{meta_label .Meta}}
   </label>
