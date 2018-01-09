@@ -1,16 +1,5 @@
 {{$metaConfig := .Meta.Config}}
 {{$current_values := (raw_value_of .ResourceValue .Meta)}}
-<style>
-.qor-sortable__block .qor-field.qor-field__mediabox,
-.qor-sortable__block .qor-field.collection-edit.qor-fieldset-container,
-.qor-form-container.qor-pulish2__action,
-[data-section-title="Basic Information"],
-[data-section-title="Organization"],
-[data-section-title="Seo Meta"],.redactor-box
-{
-  display: none !important;
-}
-</style>
 <div class="qor-field collection-edit qor-fieldset-container qor-sortable qor-fieldset-sortable" data-toggle="qor.collection.sortable" {{if $metaConfig.Max}}data-max-item="{{$metaConfig.Max}}" data-max-item-hint="Up to {{$metaConfig.Max}} {{meta_label .Meta}}"{{end}}>
   <label class="qor-field__label" for="{{.InputId}}">
     {{meta_label .Meta}}
