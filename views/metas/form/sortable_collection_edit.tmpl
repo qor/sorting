@@ -13,7 +13,7 @@
     {{$meta := .Meta}}
     {{if $current_values}}
       {{range $index, $value := $current_values }}
-        <fieldset class="qor-fieldset qor-sortable__item" style="order: {{$index}}" order-index="{{$index}}">
+        <fieldset class="qor-fieldset qor-sortable__item" style="order: {{$index}}" order-index="{{$index}}" order-item="item_{{$index}}">
 
           <div class="qor-sortable__change">
             <div class="qor-sortable__action" style="display: none;">
