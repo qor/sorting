@@ -58,6 +58,8 @@
                 .on(EVENT_CLICK, CLASS_BUTTON_MOVE, this.moveItem.bind(this))
                 .on(EVENT_CLICK, CLASS_BUTTON_DONE, this.finishMoveItem.bind(this))
                 .on(EVENT_CLICK, CLASS_BUTTON_CHANGE, this.startMoveItem.bind(this));
+
+            $(document).on('added.qor.replicator.sortableCollection', this.resetOrderArr.bind(this));
         },
 
         unbind: function() {
@@ -65,6 +67,7 @@
                 .off(EVENT_CLICK, CLASS_BUTTON_MOVE)
                 .off(EVENT_CLICK, CLASS_BUTTON_DONE)
                 .off(EVENT_CLICK, CLASS_BUTTON_CHANGE);
+            $(document).off('added.qor.replicator.sortableCollection');
         },
 
         initItemOrder: function(resetResource) {
@@ -155,6 +158,11 @@
                 $this.data(orderData);
             });
             this.itemOrderArr = this.itemOrderArr || orderArr;
+        },
+
+        resetOrderArr: function(e, $item) {
+            this.itemOrderArr.push(parseInt($item.attr('order-index')));
+            this.$item = this.$element.find(CLASS_CHILDREN_ITEM).not(CLASS_ITEM_FILTER);
         },
 
         moveItem: function(e) {
