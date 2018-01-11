@@ -161,12 +161,13 @@
         },
 
         resetOrderArr: function(e, $item) {
-            let orderIndex = $item.attr('order-index');
+            let orderIndex = parseInt($item.attr('order-index'));
             if (!orderIndex) {
                 return;
             }
 
-            this.itemOrderArr.push(parseInt(orderIndex));
+            this.itemOrderArr = this.itemOrderArr || [];
+            this.itemOrderArr.push(orderIndex);
             this.$item = this.$element.find(CLASS_CHILDREN_ITEM).not(CLASS_ITEM_FILTER);
         },
 
