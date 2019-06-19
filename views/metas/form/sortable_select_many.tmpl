@@ -81,7 +81,7 @@
         {{t (printf "qor_admin.form.add_%v" (singular (meta_label .Meta))) (printf "Add %v" (singular (meta_label .Meta)))}}
       </button>
 
-      <select class="qor-field__input" data-toggle="qor.chooser.sortable" data-placeholder="{{t "qor_admin.form.enter_search_term" "Enter Search Term"}}" {{if not (has_update_permission .Meta)}}disabled{{end}} multiple {{if .Meta.Config.RemoteDataResource}}data-ajax--url="{{url_for .Meta.Config.RemoteDataResource}}" data-remote-data="true" {{if .Meta.Config.PrimaryField}}data-remote-data-primary-key="{{.Meta.Config.PrimaryField}}"{{end}}{{end}}>
+      <select class="qor-field__input" data-toggle="qor.chooser.sortable" data-placeholder="{{t "qor_admin.form.enter_search_term" "Enter Search Term"}}" {{if not (has_update_permission .Meta)}}disabled{{end}} multiple {{if .Meta.Config.RemoteDataResource}}data-remote-url="{{url_for .Meta.Config.RemoteDataResource}}" data-remote-data="true" {{if .Meta.Config.PrimaryField}}data-remote-data-primary-key="{{.Meta.Config.PrimaryField}}"{{end}}{{end}}>
         {{if .Meta.Config.RemoteDataResource}}
           {{range $value := $current_values}}
             <option value="{{primary_key_of $value}}" data-index="{{primary_key_of $value}}" data-value="{{stringify $value}}" selected>{{stringify $value}}</option>
