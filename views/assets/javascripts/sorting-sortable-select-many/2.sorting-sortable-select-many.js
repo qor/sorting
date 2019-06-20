@@ -76,7 +76,18 @@
             });
 
             if (select2Data.remoteData) {
+                
+                let getSelect2AjaxDynamicURL = window.getSelect2AjaxDynamicURL;
+
                 option.ajax = $.fn.select2.ajaxCommonOptions(select2Data);
+
+                if(getSelect2AjaxDynamicURL && $.isFunction(getSelect2AjaxDynamicURL)){
+                        option.ajax.url = function(){
+                            return getSelect2AjaxDynamicURL(select2Data);
+                        };
+                    } else {
+                        option.ajax.url = select2Data.remoteUrl;
+                    }
 
                 option.templateResult = function(data) {
                     var tmpl = $this.parents('.qor-field').find('[name="select2-result-template"]');
