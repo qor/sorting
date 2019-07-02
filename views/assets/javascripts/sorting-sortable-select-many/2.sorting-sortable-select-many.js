@@ -65,10 +65,9 @@
 
                 onFilter: function(e) {
                     var $ele = $(e.item);
-                    var eleIndex = $ele.data('index');
 
                     $ele.remove();
-                    self.removeItemsFromList(eleIndex);
+                    self.removeItemsFromList($ele.data('value'));
                 },
                 onUpdate: function() {
                     self.renderOption();
@@ -104,9 +103,9 @@
             if ($this.is('select')) {
                 $this
                     .on('change', function() {
-                        setTimeout(function() {
-                            $parent.find(CLASS_CHOSE).remove();
-                        }, 1);
+                        // setTimeout(function() {
+                        //     $parent.find(CLASS_CHOSE).remove();
+                        // }, 1);
 
                         $(CLASS_CHOSE_INPUT).attr('placeholder', placeholderText);
                     })
@@ -156,7 +155,34 @@
         },
 
         show: function() {
+            // $('[data-toggle="qor.chooser.sortable"]').find("option:selected[data-index='11']").prop("selected", false)
+            
             let $container = this.$parent.find(CLASS_CHOSE_CONTAINER);
+            let $ele = this.$element;
+            let currentVal = $ele.val();
+            let targetVal = [];
+            let $li = this.$parent.find('.qor-dragable__list > li');
+
+            if(currentVal.length){
+
+                $li.each(function(){
+                    targetVal.push(String($(this).data("index")));
+                });
+
+                if(targetVal.length){
+                                    
+                    currentVal.forEach(function(val){
+                    
+                        if(!targetVal.includes(val)){
+                            $ele.find(`option:selected[data-index='${val}']`).prop("selected", false);
+                        }
+
+                    });
+                }
+
+            }
+
+            this.$element.trigger("change");
 
             $container.show();
             this.$parent.find(CLASS_SORTABLE_BUTTON_ADD).hide();
@@ -257,8 +283,11 @@
             this.renderOption();
         },
 
-        removeItemsFromList: function() {
+        removeItemsFromList: function(value) {
             this.renderOption();
+            if(value && $(`.select2-selection__choice[title="${value}"]`).length){
+                $(`.select2-selection__choice[title="${value}"]`).find(".select2-selection__choice__remove").click();
+            }
         },
 
         addItems: function(data, isNewData) {
@@ -280,7 +309,7 @@
     QorChooserSortable.DEFAULTS = {};
 
     QorChooserSortable.LIST_HTML =
-        '<li data-index="[[id]]" data-value="[[value]]"><span>[[value]]</span><div><i class="material-icons qor-dragable__list-delete">clear</i><i class="material-icons qor-dragable__list-handle">drag_handle</i></div></li>';
+        '<li data-index="[[id]]" data-result-id="[[_resultId]]" data-value="[[value]]"><span>[[value]]</span><div><i class="material-icons qor-dragable__list-delete">clear</i><i class="material-icons qor-dragable__list-handle">drag_handle</i></div></li>';
 
     QorChooserSortable.OPTION_HTML = '<option selected value="[[value]]"></option>';
 
