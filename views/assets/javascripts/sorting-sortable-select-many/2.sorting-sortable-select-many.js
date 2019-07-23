@@ -17,7 +17,6 @@
         EVENT_ENABLE = 'enable.' + NAMESPACE,
         EVENT_CLICK = 'click.' + NAMESPACE,
         EVENT_DISABLE = 'disable.' + NAMESPACE,
-        CLASS_CHOSE = '.select2-selection__choice',
         CLASS_CHOSE_CONTAINER = '.select2-container',
         CLASS_CHOSE_INPUT = '.select2-search__field',
         CLASS_SORTABLE_BODY = '.qor-dragable',
@@ -121,7 +120,6 @@
                 $this.select2(option);
 
                 $parent.find(CLASS_CHOSE_CONTAINER).hide();
-                $parent.find(CLASS_CHOSE).remove();
                 $(CLASS_CHOSE_INPUT).attr('placeholder', placeholderText);
             }
 
