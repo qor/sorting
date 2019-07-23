@@ -67,7 +67,7 @@
                     var $ele = $(e.item);
 
                     $ele.remove();
-                    self.removeItemsFromList($ele.data('value'));
+                    self.removeItemsFromList($ele.data());
                 },
                 onUpdate: function() {
                     self.renderOption();
@@ -283,9 +283,14 @@
             this.renderOption();
         },
 
-        removeItemsFromList: function(value) {
+        removeItemsFromList: function(data) {
             this.renderOption();
-            if(value && $(`.select2-selection__choice[title="${value}"]`).length){
+            var index = data.index;
+            var value = data.value;
+
+            if(index && $(`.select2-selection__choice[item-id="${index}"]`).length){
+                $(`.select2-selection__choice[item-id="${index}"]`).find(".select2-selection__choice__remove").click();
+            } else if(value && $(`.select2-selection__choice[title="${value}"]`).length){
                 $(`.select2-selection__choice[title="${value}"]`).find(".select2-selection__choice__remove").click();
             }
         },
