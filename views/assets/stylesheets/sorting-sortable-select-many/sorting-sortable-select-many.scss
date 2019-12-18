@@ -29,6 +29,11 @@ $color-black: "0,0,0";
             padding: 8px;
             border-bottom: 1px solid unquote("rgba(#{$color-black}, 0.12)");
             min-height: 24px;
+            img{
+                max-width: 80px;
+                max-height: 50px;
+                margin-right: 8px;
+            }
             > div, > span{
                 display: inline-block;
                 vertical-align: middle;

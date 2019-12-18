@@ -54,6 +54,8 @@
             this.$sortableList = $parent.find(CLASS_SORTABLE);
             this.$parent = $parent;
 
+            this.hasRemoteImage = select2Data.remoteImage;
+
             var sortEle = $parent.find(CLASS_SORTABLE)[0];
 
             this.sortable = window.Sortable.create(sortEle, {
@@ -74,28 +76,28 @@
             });
 
             if (select2Data.remoteData) {
-                
                 let getSelect2AjaxDynamicURL = window.getSelect2AjaxDynamicURL;
+                let remoteDataImage = select2Data.remoteImage;
 
                 option.ajax = $.fn.select2.ajaxCommonOptions(select2Data);
 
-                if(getSelect2AjaxDynamicURL && $.isFunction(getSelect2AjaxDynamicURL)){
-                        option.ajax.url = function(){
-                            return getSelect2AjaxDynamicURL(select2Data);
-                        };
-                    } else {
-                        option.ajax.url = select2Data.remoteUrl;
-                    }
+                if (getSelect2AjaxDynamicURL && $.isFunction(getSelect2AjaxDynamicURL)) {
+                    option.ajax.url = function() {
+                        return getSelect2AjaxDynamicURL(select2Data);
+                    };
+                } else {
+                    option.ajax.url = select2Data.remoteUrl;
+                }
 
                 option.templateResult = function(data) {
                     var tmpl = $this.parents('.qor-field').find('[name="select2-result-template"]');
-                    return $.fn.select2.ajaxFormatResult(data, tmpl);
+                    return $.fn.select2.ajaxFormatResult(data, tmpl, remoteDataImage);
                 };
 
                 option.templateSelection = function(data) {
                     if (data.loading) return data.text;
                     var tmpl = $this.parents('.qor-field').find('[name="select2-selection-template"]');
-                    return $.fn.select2.ajaxFormatResult(data, tmpl);
+                    return $.fn.select2.ajaxFormatResult(data, tmpl, remoteDataImage);
                 };
             }
 
@@ -154,33 +156,28 @@
 
         show: function() {
             // $('[data-toggle="qor.chooser.sortable"]').find("option:selected[data-index='11']").prop("selected", false)
-            
+
             let $container = this.$parent.find(CLASS_CHOSE_CONTAINER);
             let $ele = this.$element;
             let currentVal = $ele.val();
             let targetVal = [];
             let $li = this.$parent.find('.qor-dragable__list > li');
 
-            if(currentVal.length){
-
-                $li.each(function(){
-                    targetVal.push(String($(this).data("index")));
+            if (currentVal.length) {
+                $li.each(function() {
+                    targetVal.push(String($(this).data('index')));
                 });
 
-                if(targetVal.length){
-                                    
-                    currentVal.forEach(function(val){
-                    
-                        if(!targetVal.includes(val)){
-                            $ele.find(`option:selected[data-index='${val}']`).prop("selected", false);
+                if (targetVal.length) {
+                    currentVal.forEach(function(val) {
+                        if (!targetVal.includes(val)) {
+                            $ele.find(`option:selected[data-index='${val}']`).prop('selected', false);
                         }
-
                     });
                 }
-
             }
 
-            this.$element.trigger("change");
+            this.$element.trigger('change');
 
             $container.show();
             this.$parent.find(CLASS_SORTABLE_BUTTON_ADD).hide();
@@ -256,7 +253,11 @@
         },
 
         renderItem: function(data) {
-            return window.Mustache.render(QorChooserSortable.LIST_HTML, data);
+            if (this.hasRemoteImage) {
+                return window.Mustache.render(QorChooserSortable.LIST_HTML_WITH_IMAGE, data);
+            } else {
+                return window.Mustache.render(QorChooserSortable.LIST_HTML, data);
+            }
         },
 
         renderOption: function() {
@@ -286,10 +287,14 @@
             var index = data.index;
             var value = data.value;
 
-            if(index && $(`.select2-selection__choice[item-id="${index}"]`).length){
-                $(`.select2-selection__choice[item-id="${index}"]`).find(".select2-selection__choice__remove").click();
-            } else if(value && $(`.select2-selection__choice[title="${value}"]`).length){
-                $(`.select2-selection__choice[title="${value}"]`).find(".select2-selection__choice__remove").click();
+            if (index && $(`.select2-selection__choice[item-id="${index}"]`).length) {
+                $(`.select2-selection__choice[item-id="${index}"]`)
+                    .find('.select2-selection__choice__remove')
+                    .click();
+            } else if (value && $(`.select2-selection__choice[title="${value}"]`).length) {
+                $(`.select2-selection__choice[title="${value}"]`)
+                    .find('.select2-selection__choice__remove')
+                    .click();
             }
         },
 
@@ -313,6 +318,9 @@
 
     QorChooserSortable.LIST_HTML =
         '<li data-index="[[id]]" data-result-id="[[_resultId]]" data-value="[[value]]"><span>[[value]]</span><div><i class="material-icons qor-dragable__list-delete">clear</i><i class="material-icons qor-dragable__list-handle">drag_handle</i></div></li>';
+
+    QorChooserSortable.LIST_HTML_WITH_IMAGE =
+        '<li data-index="[[id]]" data-result-id="[[_resultId]]" data-value="[[value]]"><span><img src="[[Image]]">[[value]]</span><div><i class="material-icons qor-dragable__list-delete">clear</i><i class="material-icons qor-dragable__list-handle">drag_handle</i></div></li>';
 
     QorChooserSortable.OPTION_HTML = '<option selected value="[[value]]"></option>';
 
