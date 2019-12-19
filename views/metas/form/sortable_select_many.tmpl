@@ -35,7 +35,7 @@
               <li data-index="{{index $values 0}}" data-value="{{index $values 1}}">
                 <span>
                   {{if $hasImage}}
-                    {{if index $values 2}}
+                    {{if gt (len (index $values)) 2}}
                     <img src="{{index $values 2}}">
                     {{end}}
                   {{end}}
