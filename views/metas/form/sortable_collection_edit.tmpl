@@ -23,7 +23,7 @@
           </div>
 
           {{if has_delete_permission $meta}}
-            <button class="mdl-button qor-button--muted mdl-button--icon mdl-js-button qor-fieldset__delete qor-sortable__button-delete" type="button">
+            <button data-confirm="{{t "qor_admin.form.are_you_sure" "Are you sure?"}}" class="mdl-button qor-button--muted mdl-button--icon mdl-js-button qor-fieldset__delete qor-sortable__button-delete" type="button">
               <i class="material-icons md-18">delete</i>
             </button>
           {{end}}
@@ -42,7 +42,7 @@
           </div>
         </div>
 
-        <button class="mdl-button qor-button--muted mdl-button--icon mdl-js-button qor-fieldset__delete qor-sortable__button-delete" type="button">
+        <button data-confirm="{{t "qor_admin.form.are_you_sure" "Are you sure?"}}" class="mdl-button qor-button--muted mdl-button--icon mdl-js-button qor-fieldset__delete qor-sortable__button-delete" type="button">
           <i class="material-icons md-18">delete</i>
         </button>
         {{render_nested_form $meta.Resource.GetResource.Value (new_sections $meta.Resource) (len $current_values)}}
