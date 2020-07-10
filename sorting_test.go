@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/jinzhu/gorm"
-	"github.com/qor/l10n"
 	"github.com/qor/publish"
+	"github.com/qor/publish2"
 	"github.com/qor/qor/test/utils"
 	"github.com/qor/sorting"
 )
@@ -16,6 +16,7 @@ type User struct {
 	gorm.Model
 	Name string
 	sorting.Sorting
+	publish2.Version
 }
 
 var db *gorm.DB
@@ -24,25 +25,29 @@ var pb *publish.Publish
 func init() {
 	db = utils.TestDB()
 	sorting.RegisterCallbacks(db)
-	l10n.RegisterCallbacks(db)
+	publish2.RegisterCallbacks(db)
+	// l10n.RegisterCallbacks(db)
 
-	pb = publish.New(db)
-	if err := pb.ProductionDB().DropTableIfExists(&User{}, &Product{}, &Brand{}).Error; err != nil {
-		panic(err)
-	}
-	if err := pb.DraftDB().DropTableIfExists(&Product{}).Error; err != nil {
-		panic(err)
-	}
-	db.AutoMigrate(&User{}, &Product{}, &Brand{})
-	pb.AutoMigrate(&Product{})
+	// pb = publish.New(db)
+	// if err := pb.ProductionDB().DropTableIfExists(&User{}, &Product{}, &Brand{}).Error; err != nil {
+	// 	panic(err)
+	// }
+	// if err := pb.DraftDB().DropTableIfExists(&Product{}).Error; err != nil {
+	// 	panic(err)
+	// }
+	db.AutoMigrate(&User{}, &Brand{})
+	// pb.AutoMigrate(&Product{})
 }
 
 func prepareUsers() {
-	db.Delete(&User{})
+	utils.ResetDBTables(db, &User{})
 
 	for i := 1; i <= 5; i++ {
 		user := User{Name: fmt.Sprintf("user%v", i)}
-		db.Save(&user)
+		user.VersionName = fmt.Sprintf("version-%v", i)
+		if err := db.Save(&user).Error; err != nil {
+			panic(err)
+		}
 	}
 }
 
