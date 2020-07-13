@@ -26,17 +26,7 @@ func init() {
 	db = utils.TestDB()
 	sorting.RegisterCallbacks(db)
 	publish2.RegisterCallbacks(db)
-	// l10n.RegisterCallbacks(db)
-
-	// pb = publish.New(db)
-	// if err := pb.ProductionDB().DropTableIfExists(&User{}, &Product{}, &Brand{}).Error; err != nil {
-	// 	panic(err)
-	// }
-	// if err := pb.DraftDB().DropTableIfExists(&Product{}).Error; err != nil {
-	// 	panic(err)
-	// }
 	db.AutoMigrate(&User{}, &Brand{})
-	// pb.AutoMigrate(&Product{})
 }
 
 func prepareUsers() {
@@ -44,9 +34,26 @@ func prepareUsers() {
 
 	for i := 1; i <= 5; i++ {
 		user := User{Name: fmt.Sprintf("user%v", i)}
-		user.VersionName = fmt.Sprintf("version-%v", i)
 		if err := db.Save(&user).Error; err != nil {
 			panic(err)
+		}
+	}
+}
+
+func prepareVersioningUsers() {
+	utils.ResetDBTables(db, &User{})
+
+	for i := 1; i <= 5; i++ {
+		user := User{Name: fmt.Sprintf("user%v", i)}
+
+		for j := 0; j < 3; j++ {
+			user.SetVersionName(fmt.Sprintf("version-%v", j))
+			user.SetPosition(i)
+			if err := db.Save(&user).Error; err != nil {
+				panic(err)
+			}
+
+			db.Model(&user).UpdateColumn("Position", i)
 		}
 	}
 }
@@ -71,6 +78,26 @@ func checkPosition(names ...string) bool {
 	} else {
 		fmt.Printf("Expect %v, got %v\n", names, positions)
 		return false
+	}
+}
+
+func TestChangePositionForMultiVersionRecords(t *testing.T) {
+	prepareVersioningUsers()
+	u := getUser("user5")
+	sorting.MoveUp(db, u, 2)
+	if !checkPosition("user1", "user2", "user5", "user3", "user4") {
+		t.Errorf("user5 should be moved up")
+	}
+
+	user5Versions := []User{}
+	if err := db.Where("id = ?", u.ID).Find(&user5Versions).Error; err != nil {
+		t.Fatal(err)
+	}
+
+	for _, u5V := range user5Versions {
+		if u5V.GetPosition() != u.GetPosition() {
+			t.Error("postion for same record version is not synced")
+		}
 	}
 }
 
