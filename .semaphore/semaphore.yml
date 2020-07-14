@@ -11,14 +11,14 @@ blocks:
         - name: go test
           commands:
             - sem-version go 1.11
+            - sem-service start postgres
+            - createdb -U postgres -P 123456 qor_test
+            - export DB_USER=postgres
+            - export DB_PWD=123456
+            - export TEST_DB=postgres
+            - echo 'running tests'
             - export GOPATH=~/go
             - 'export PATH=/home/semaphore/go/bin:$PATH'
             - checkout
             - go get ./...
             - go test ./...
-      prologue:
-        commands:
-          - createdb qor_test -U $DATABASE_POSTGRESQL_USERNAME
-          - export DB_USER=$DATABASE_POSTGRESQL_USERNAME
-          - export DB_PWD=$DATABASE_POSTGRESQL_PASSWORD
-          - export TEST_DB=postgres
