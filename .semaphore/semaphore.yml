@@ -12,7 +12,7 @@ blocks:
           commands:
             - sem-version go 1.11
             - sem-service start postgres
-            - createdb -U postgres -P 123456 qor_test
+            - createdb -U postgres -W 123456 qor_test
             - export DB_USER=postgres
             - export DB_PWD=123456
             - export TEST_DB=postgres
