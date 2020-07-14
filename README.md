@@ -138,6 +138,9 @@ Widgets.RegisterWidget(&widget.Widget{
 }
 ```
 
+### About record with composite primary key.
+It do support sorting records with composite primary key. However there is a exception, the `version_name` is a "reserved" primary key for the qor/publish2 support. So DO NOT use `version_name` as a part of the composite primary key unless you are using qor/publish2.
+
 ## License
 
 Released under the [MIT License](http://opensource.org/licenses/MIT).
