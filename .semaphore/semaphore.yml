@@ -19,8 +19,7 @@ blocks:
             - echo 'running tests'
             - export GOPATH=~/go
             - 'export PATH=/home/semaphore/go/bin:$PATH'
-            - checkout
             - go get github.com/go-sql-driver/mysql
             - go get github.com/lib/pq
             - go get -u ./...
-            - go test ./...
+            - go test
