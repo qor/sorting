@@ -21,5 +21,6 @@ blocks:
             - 'export PATH=/home/semaphore/go/bin:$PATH'
             - checkout
             - go get github.com/go-sql-driver/mysql
+            - go get github.com/lib/pq
             - go get ./...
             - go test ./...
