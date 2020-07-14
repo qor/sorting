@@ -1,5 +1,5 @@
 version: v1.0
-name: Go
+name: Go Example
 agent:
   machine:
     type: e1-standard-2
@@ -7,9 +7,15 @@ agent:
 blocks:
   - name: Test
     task:
+      prologue:
+        commands:
+          - 'export "SEMAPHORE_GIT_DIR=$(go env GOPATH)/src/github.com/${SEMAPHORE_PROJECT_NAME}"'
+          - 'export "PATH=$(go env GOPATH)/bin:${PATH}"'
+          - 'mkdir -vp "${SEMAPHORE_GIT_DIR}" "$(go env GOPATH)/bin"'
       jobs:
-        - name: go test
+        - name: Test Suite
           commands:
+            - checkout
             - sem-version go 1.11
             - sem-service start postgres
             - createdb -U postgres qor_test
