@@ -94,8 +94,9 @@ func TestChangePositionForMultiVersionRecords(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	u5 := getUser("user5")
 	for _, u5V := range user5Versions {
-		if u5V.GetPosition() != u.GetPosition() {
+		if u5V.GetPosition() != u5.GetPosition() {
 			t.Error("postion for same record version is not synced")
 		}
 	}
@@ -156,6 +157,7 @@ func TestMoveToPosition(t *testing.T) {
 		t.Errorf("user5 should be moved to position 2")
 	}
 
+	user = getUser("user5")
 	sorting.MoveTo(db, user, user.GetPosition()-1)
 	if !checkPosition("user5", "user1", "user2", "user3", "user4") {
 		t.Errorf("user5 should be moved to position 1")

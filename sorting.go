@@ -89,8 +89,6 @@ func move(db *gorm.DB, value sortingInterface, pos int) (err error) {
 		if pos < 0 {
 			rowsAffected = -rowsAffected
 		}
-		// TODO: is this necessary?
-		value.SetPosition(currentPos + rowsAffected)
 		// Use ID as the ONLY condition, so that we can update all version of one record's position.
 		modelObj := reflect.Indirect(reflect.ValueOf(value))
 		err = tx.Table(scope.TableName()).Where("id = ?", modelObj.FieldByName("ID").Interface().(uint)).UpdateColumn("position", gorm.Expr("position + ?", rowsAffected)).Error
