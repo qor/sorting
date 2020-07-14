@@ -3,6 +3,7 @@
 Sorting adds reordering abilities to [GORM](https://github.com/jinzhu/gorm) models and sorts collections.
 
 [![GoDoc](https://godoc.org/github.com/qor/sorting?status.svg)](https://godoc.org/github.com/qor/sorting)
+[![Build Status](https://semaphoreci.com/api/v1/raven/sorting/branches/master/badge.svg)](https://semaphoreci.com/raven/sorting)
 
 ### Register GORM Callbacks
 
