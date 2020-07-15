@@ -4,4 +4,5 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+source test_env
 go test ./...

@@ -15,7 +15,8 @@ require (
 	github.com/qor/l10n v0.0.0-20181031091737-2ca95fb3b4dd
 	github.com/qor/middlewares v0.0.0-20170822143614-781378b69454 // indirect
 	github.com/qor/publish v0.0.0-20181014061411-abfbacee9e0d
-	github.com/qor/qor v0.0.0-20200224122013-457d2e3f50e1
+	github.com/qor/publish2 v0.0.0-20200106024649-fcb930aa85ac
+	github.com/qor/qor v0.0.0-20200715033016-13227382be83
 	github.com/qor/responder v0.0.0-20171031032654-b6def473574f // indirect
 	github.com/qor/roles v0.0.0-20171127035124-d6375609fe3e
 	github.com/qor/serializable_meta v0.0.0-20180510060738-5fd8542db417 // indirect

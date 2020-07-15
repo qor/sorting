@@ -1,0 +1,7 @@
+export TEST_DB=postgres
+
+export DB_USER=db
+export DB_PWD=123
+export DB_NAME=qor_sorting_test
+export DB_HOST=postgres
+

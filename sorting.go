@@ -62,31 +62,36 @@ func move(db *gorm.DB, value sortingInterface, pos int) (err error) {
 
 	scope := db.NewScope(value)
 	for _, field := range scope.PrimaryFields() {
-		if field.DBName != "id" {
+		// "version_name" is a "reserved" primary key, we always update all versions postion at the same time.
+		// so don't count version name as a condition.
+		if field.DBName != "id" && field.DBName != "version_name" {
 			tx = tx.Where(fmt.Sprintf("%s = ?", field.DBName), field.Field.Interface())
 		}
 	}
 
 	currentPos := value.GetPosition()
-
 	var results *gorm.DB
-	if pos > 0 {
-		results = tx.Model(newModel(value)).
-			Where("position > ? AND position <= ?", currentPos, currentPos+pos).
-			UpdateColumn("position", gorm.Expr("position - ?", 1))
-	} else {
-		results = tx.Model(newModel(value)).
-			Where("position < ? AND position >= ?", currentPos, currentPos+pos).
-			UpdateColumn("position", gorm.Expr("position + ?", 1))
-	}
+	affectedIDDistinctRecordsCount := 0
 
+	if pos > 0 {
+		query := tx.Table(scope.TableName()).Where("position > ? AND position <= ?", currentPos, currentPos+pos)
+		query.Select("count(distinct(id))").Count(&affectedIDDistinctRecordsCount)
+
+		results = query.UpdateColumn("position", gorm.Expr("position - ?", 1))
+	} else {
+		query := tx.Table(scope.TableName()).Where("position < ? AND position >= ?", currentPos, currentPos+pos)
+		query.Select("count(distinct(id))").Count(&affectedIDDistinctRecordsCount)
+
+		results = query.UpdateColumn("position", gorm.Expr("position + ?", 1))
+	}
 	if err = results.Error; err == nil {
-		var rowsAffected = int(results.RowsAffected)
+		var rowsAffected = affectedIDDistinctRecordsCount
 		if pos < 0 {
 			rowsAffected = -rowsAffected
 		}
-		value.SetPosition(currentPos + rowsAffected)
-		err = tx.Model(value).UpdateColumn("position", gorm.Expr("position + ?", rowsAffected)).Error
+		// Use ID as the ONLY condition, so that we can update all version of one record's position.
+		modelObj := reflect.Indirect(reflect.ValueOf(value))
+		err = tx.Table(scope.TableName()).Where("id = ?", modelObj.FieldByName("ID").Interface().(uint)).UpdateColumn("position", gorm.Expr("position + ?", rowsAffected)).Error
 	}
 
 	// Create Publish Event

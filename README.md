@@ -3,6 +3,7 @@
 Sorting adds reordering abilities to [GORM](https://github.com/jinzhu/gorm) models and sorts collections.
 
 [![GoDoc](https://godoc.org/github.com/qor/sorting?status.svg)](https://godoc.org/github.com/qor/sorting)
+[![Build Status](https://semaphoreci.com/api/v1/raven/sorting/branches/master/badge.svg)](https://semaphoreci.com/raven/sorting)
 
 ### Register GORM Callbacks
 
@@ -137,6 +138,9 @@ Widgets.RegisterWidget(&widget.Widget{
   Setting:   selectedProductsResource,
 }
 ```
+
+### About record with composite primary key.
+It do support sorting records with composite primary key. However there is a exception, the `version_name` is a "reserved" primary key for the qor/publish2 support. So DO NOT use `version_name` as a part of the composite primary key unless you are using qor/publish2.
 
 ## License
 

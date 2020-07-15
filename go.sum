@@ -44,8 +44,14 @@ github.com/qor/middlewares v0.0.0-20170822143614-781378b69454 h1:+WCc1IigwWpWBxM
 github.com/qor/middlewares v0.0.0-20170822143614-781378b69454/go.mod h1:PejEyg3hS+Toh5m0AKRv2jK5br8qIoHLqmHrpg0WJYg=
 github.com/qor/publish v0.0.0-20181014061411-abfbacee9e0d h1:U+g8WMSHCibub/ZnX5gIG8SKk8d1UA0Ppv863vGhfoE=
 github.com/qor/publish v0.0.0-20181014061411-abfbacee9e0d/go.mod h1:rsJ6QTqNLOPY3xaWmphqPkMqqbBPS8pAwkJWY+t5XHg=
+github.com/qor/publish2 v0.0.0-20200106024649-fcb930aa85ac h1:FwXx1vbVj9rtJW+150HCj/L17L5M4LiFw8JpopU9pfE=
+github.com/qor/publish2 v0.0.0-20200106024649-fcb930aa85ac/go.mod h1:f29A86/3KWWIOAsHjZP4gVb/PHHtPIONEm5ZrjqTU9A=
 github.com/qor/qor v0.0.0-20200224122013-457d2e3f50e1 h1:oxV/UtQmFJiWvh18ngprVhnyxRmSZaK/NcH7REjfEkk=
 github.com/qor/qor v0.0.0-20200224122013-457d2e3f50e1/go.mod h1:oG+LgDEnsI9avcFFdczoZnBe3rw42s4cG433w6XpEig=
+github.com/qor/qor v0.0.0-20200709065202-cd5a085d171c h1:fD0wnUty74SQA+4+iurwtFSdT2qKrORcU3NXcgk2GdQ=
+github.com/qor/qor v0.0.0-20200709065202-cd5a085d171c/go.mod h1:oG+LgDEnsI9avcFFdczoZnBe3rw42s4cG433w6XpEig=
+github.com/qor/qor v0.0.0-20200715033016-13227382be83 h1:IUnJgj3vY/1MAgZx/Hf+IAqe4Kn5NedjumfmFIm0xKo=
+github.com/qor/qor v0.0.0-20200715033016-13227382be83/go.mod h1:oG+LgDEnsI9avcFFdczoZnBe3rw42s4cG433w6XpEig=
 github.com/qor/responder v0.0.0-20171031032654-b6def473574f h1:sKELSAyL+z5BRHFe97Bx71z197cBEobVJ6rASKTMSqU=
 github.com/qor/responder v0.0.0-20171031032654-b6def473574f/go.mod h1:0TL2G+qGDYhHJ6XIJ6UcqkZVN+jp8AGqGU2wDnv2qas=
 github.com/qor/roles v0.0.0-20171127035124-d6375609fe3e h1:F0BNcPJKfubM/+IIILu/GbrH9v2vPZWQ5/StSRKUfK4=
