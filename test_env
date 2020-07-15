@@ -1,0 +1,3 @@
+export DB_USER=db
+export DB_PWD=123
+export TEST_DB=postgres
