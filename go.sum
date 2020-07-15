@@ -50,6 +50,8 @@ github.com/qor/qor v0.0.0-20200224122013-457d2e3f50e1 h1:oxV/UtQmFJiWvh18ngprVhn
 github.com/qor/qor v0.0.0-20200224122013-457d2e3f50e1/go.mod h1:oG+LgDEnsI9avcFFdczoZnBe3rw42s4cG433w6XpEig=
 github.com/qor/qor v0.0.0-20200709065202-cd5a085d171c h1:fD0wnUty74SQA+4+iurwtFSdT2qKrORcU3NXcgk2GdQ=
 github.com/qor/qor v0.0.0-20200709065202-cd5a085d171c/go.mod h1:oG+LgDEnsI9avcFFdczoZnBe3rw42s4cG433w6XpEig=
+github.com/qor/qor v0.0.0-20200715033016-13227382be83 h1:IUnJgj3vY/1MAgZx/Hf+IAqe4Kn5NedjumfmFIm0xKo=
+github.com/qor/qor v0.0.0-20200715033016-13227382be83/go.mod h1:oG+LgDEnsI9avcFFdczoZnBe3rw42s4cG433w6XpEig=
 github.com/qor/responder v0.0.0-20171031032654-b6def473574f h1:sKELSAyL+z5BRHFe97Bx71z197cBEobVJ6rASKTMSqU=
 github.com/qor/responder v0.0.0-20171031032654-b6def473574f/go.mod h1:0TL2G+qGDYhHJ6XIJ6UcqkZVN+jp8AGqGU2wDnv2qas=
 github.com/qor/roles v0.0.0-20171127035124-d6375609fe3e h1:F0BNcPJKfubM/+IIILu/GbrH9v2vPZWQ5/StSRKUfK4=
