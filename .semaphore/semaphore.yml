@@ -1,0 +1,31 @@
+version: v1.0
+name: Go Example
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Test
+    task:
+      prologue:
+        commands:
+          - 'export "SEMAPHORE_GIT_DIR=$(go env GOPATH)/src/github.com/${SEMAPHORE_PROJECT_NAME}"'
+          - 'export "PATH=$(go env GOPATH)/bin:${PATH}"'
+          - 'mkdir -vp "${SEMAPHORE_GIT_DIR}" "$(go env GOPATH)/bin"'
+      jobs:
+        - name: Test Suite
+          commands:
+            - checkout
+            - sem-version go 1.11
+            - sem-service start postgres
+            - createdb -U postgres qor_test
+            - export DB_USER=postgres
+            - export DB_PWD=""
+            - export TEST_DB=postgres
+            - echo 'running tests'
+            - export GOPATH=~/go
+            - 'export PATH=/home/semaphore/go/bin:$PATH'
+            - go get github.com/go-sql-driver/mysql
+            - go get github.com/lib/pq
+            - go get -u ./...
+            - go test
