@@ -30,6 +30,7 @@
         CLASS_HOVER = 'qor-sorting__hover',
         SELECTOR_TR = 'tbody > tr';
 
+        
     function QorSorter(element, options) {
         this.$element = $(element);
         this.options = $.extend({}, QorSorter.DEFAULTS, $.isPlainObject(options) && options);
