@@ -297,7 +297,7 @@
         },
 
         sort: function($row, data) {
-            let options = this.options;
+            // let options = this.options;
 
             if (data.url) {
                 this.highlight($row);
@@ -310,7 +310,7 @@
                     },
                     success: function(actualPosition, textStatus, xhr) {
                         if (xhr.status === 200) {
-                            $row.find(options.input).data('position', actualPosition).val(actualPosition);
+                            // $row.find(options.input).data('position', actualPosition).val(actualPosition);
                         }
                     },
                     error: function(xhr, textStatus, errorThrown) {
