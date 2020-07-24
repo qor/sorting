@@ -78,7 +78,7 @@ func (s *Sorting) ConfigureQorResourceBeforeInitialize(res resource.Resourcer) {
 
 				primaryKey := ctx.GetDB().NewScope(value).PrimaryKeyValue()
 				url := path.Join(ctx.Request.URL.Path, fmt.Sprintf("%v", primaryKey), "sorting/update_position")
-				return template.HTML(fmt.Sprintf("<input type=\"number\" class=\"qor-sorting__position\" value=\"%v\" data-sorting-url=\"%v\" data-position=\"%v\">", pos, url, pos))
+				return template.HTML(fmt.Sprintf("<input type=\"number\" disabled class=\"qor-sorting__position\" value=\"%v\" data-sorting-url=\"%v\" data-position=\"%v\">", pos, url, pos))
 			},
 			Permission: roles.Allow(roles.Read, "sorting_mode"),
 		})
