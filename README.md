@@ -3,7 +3,7 @@
 Sorting adds reordering abilities to [GORM](https://github.com/jinzhu/gorm) models and sorts collections.
 
 [![GoDoc](https://godoc.org/github.com/qor/sorting?status.svg)](https://godoc.org/github.com/qor/sorting)
-![Build status](https://prow.theplant.dev/badge.svg?jobs=post-qor-sorting-go-test)
+[![Build Status](https://travis-ci.com/qor/sorting.svg?branch=master)](https://travis-ci.com/qor/sorting)
 
 ### Register GORM Callbacks
 
