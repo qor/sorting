@@ -313,7 +313,6 @@
                     success: function(actualPosition, textStatus, xhr) {
                         if (xhr.status === 200) {
                             // $row.find(options.input).data('position', actualPosition).val(actualPosition);
-                            $('.qor-sorting__mask').remove();
                         }
                     },
                     error: function(xhr, textStatus, errorThrown) {
@@ -323,6 +322,8 @@
                             window.alert([textStatus, errorThrown].join(': '));
                         }
                     }
+                }).always(function() {
+                    $('.qor-sorting__mask').remove();
                 });
             }
         },
