@@ -301,6 +301,8 @@
 
             if (data.url) {
                 this.highlight($row);
+            
+                $row.parent().after('<div class="qor-sorting__mask" style="position:absolute;width:100%;height:100%;top:0;left:0;z-index:10;background:#000;opacity:.4;"></div>');
 
                 $.ajax(data.url, {
                     method: 'post',
@@ -311,6 +313,7 @@
                     success: function(actualPosition, textStatus, xhr) {
                         if (xhr.status === 200) {
                             // $row.find(options.input).data('position', actualPosition).val(actualPosition);
+                            $('.qor-sorting__mask').remove();
                         }
                     },
                     error: function(xhr, textStatus, errorThrown) {
