@@ -321,6 +321,8 @@
                         } else {
                             window.alert([textStatus, errorThrown].join(': '));
                         }
+
+                        location.reload();
                     }
                 }).always(function() {
                     $('.qor-sorting__mask').remove();
