@@ -71,27 +71,18 @@ func move(db *gorm.DB, value sortingInterface, pos int) (err error) {
 
 	currentPos := value.GetPosition()
 	var results *gorm.DB
-	affectedIDDistinctRecordsCount := 0
-
 	if pos > 0 {
-		query := tx.Table(scope.TableName()).Where("position > ? AND position <= ?", currentPos, currentPos+pos)
-		query.Select("count(distinct(id))").Count(&affectedIDDistinctRecordsCount)
-
-		results = query.UpdateColumn("position", gorm.Expr("position - ?", 1))
+		results = tx.Table(scope.TableName()).Where("position > ? AND position <= ?", currentPos, currentPos+pos).
+			UpdateColumn("position", gorm.Expr("position - ?", 1))
 	} else {
-		query := tx.Table(scope.TableName()).Where("position < ? AND position >= ?", currentPos, currentPos+pos)
-		query.Select("count(distinct(id))").Count(&affectedIDDistinctRecordsCount)
-
-		results = query.UpdateColumn("position", gorm.Expr("position + ?", 1))
+		results = tx.Table(scope.TableName()).Where("position < ? AND position >= ?", currentPos, currentPos+pos).
+			UpdateColumn("position", gorm.Expr("position + ?", 1))
 	}
-	if err = results.Error; err == nil {
-		var rowsAffected = affectedIDDistinctRecordsCount
-		if pos < 0 {
-			rowsAffected = -rowsAffected
-		}
+
+	if err = results.Error; err == nil && results.RowsAffected > 0 {
 		// Use ID as the ONLY condition, so that we can update all version of one record's position.
 		modelObj := reflect.Indirect(reflect.ValueOf(value))
-		err = tx.Table(scope.TableName()).Where("id = ?", modelObj.FieldByName("ID").Interface().(uint)).UpdateColumn("position", gorm.Expr("position + ?", rowsAffected)).Error
+		err = tx.Table(scope.TableName()).Where("id = ?", modelObj.FieldByName("ID").Interface().(uint)).UpdateColumn("position", currentPos+pos).Error
 	}
 
 	// Create Publish Event
