@@ -182,3 +182,56 @@ func TestDeleteToReorder(t *testing.T) {
 		t.Errorf("user's order should be correct after delete some resources")
 	}
 }
+
+func TestMultiMovePosition(t *testing.T) {
+	utils.ResetDBTables(db, &User{})
+
+	for i := 1; i <= 20; i++ {
+		user := User{Name: fmt.Sprintf("user%v", i)}
+		if err := db.Save(&user).Error; err != nil {
+			panic(err)
+		}
+	}
+
+	user7 := getUser("user7")
+	user8 := getUser("user8")
+	user21 := User{Name: fmt.Sprintf("user%v", 21)}
+
+	sorting.MoveTo(db, getUser("user5"), 10)
+	sorting.MoveTo(db, getUser("user5"), 1)
+	sorting.MoveTo(db, getUser("user5"), 15)
+	db.Delete(user7)
+
+	sorting.MoveTo(db, getUser("user5"), 3)
+	sorting.MoveTo(db, getUser("user5"), 7)
+	db.Delete(user8)
+	sorting.MoveTo(db, getUser("user5"), 20)
+	db.Save(&user21)
+	sorting.MoveTo(db, getUser("user5"), 21)
+	if p := getUser("user21").GetPosition(); p != 20 {
+		t.Errorf("user21 should at pos 20, but got pos: %v", p)
+	}
+	sorting.MoveTo(db, getUser("user5"), 8)
+	sorting.MoveTo(db, getUser("user21"), 3)
+	if p := getUser("user5").GetPosition(); p != 9 {
+		t.Errorf("user5 should at pos 9, but got pos: %v", p)
+	}
+
+	sorting.MoveTo(db, getUser("user5"), 1)
+	if p := getUser("user21").GetPosition(); p != 4 {
+		t.Errorf("user21 should at pos 4, but got pos: %v", p)
+	}
+	sorting.MoveTo(db, getUser("user5"), 21)
+	if p := getUser("user5").GetPosition(); p != 21 {
+		t.Errorf("user5 should at pos 9, but got pos: %v", p)
+	}
+	sorting.MoveTo(db, getUser("user5"), 10)
+	sorting.MoveTo(db, getUser("user5"), 16)
+	sorting.MoveTo(db, getUser("user5"), 19)
+	sorting.MoveTo(db, getUser("user5"), 4)
+	sorting.MoveTo(db, getUser("user5"), 7)
+	sorting.MoveTo(db, getUser("user5"), 14)
+	if p := getUser("user5").GetPosition(); p != 14 {
+		t.Errorf("user5 should at pos 14, but got pos: %v", p)
+	}
+}
