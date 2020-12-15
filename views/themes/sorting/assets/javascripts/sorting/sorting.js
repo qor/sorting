@@ -28,7 +28,8 @@
         CLASS_SORTING = 'qor-sorting',
         CLASS_HIGHLIGHT = 'qor-sorting__highlight',
         CLASS_HOVER = 'qor-sorting__hover',
-        SELECTOR_TR = 'tbody > tr';
+        SELECTOR_TR = 'tbody > tr',
+        CLASS_BODY_LOADING = ".qor-body__loading";
 
         
     function QorSorter(element, options) {
@@ -296,13 +297,19 @@
             });
         },
 
+        addLoading: function() {
+            $(CLASS_BODY_LOADING).remove();
+            var $loading = $(QorSorter.TEMPLATE_LOADING);
+            $loading.appendTo($("body")).trigger("enable.qor.material");
+        },
+
         sort: function($row, data) {
             // let options = this.options;
 
             if (data.url) {
                 this.highlight($row);
             
-                $row.parent().after('<div class="qor-sorting__mask" style="position:absolute;width:100%;height:100%;top:0;left:0;z-index:10;background:#000;opacity:.4;"></div>');
+                this.addLoading();
 
                 $.ajax(data.url, {
                     method: 'post',
@@ -325,7 +332,7 @@
                         location.reload();
                     }
                 }).always(function() {
-                    $('.qor-sorting__mask').remove();
+                    $(CLASS_BODY_LOADING).remove();
                 });
             }
         },
@@ -350,6 +357,11 @@
     };
 
     QorSorter.TEMPLATE = '<a class="qor-sorting__toggle"><i class="material-icons">drag_handle</i></a>';
+
+    QorSorter.TEMPLATE_LOADING = `<div class="qor-body__loading">
+                                        <div class="mdl-dialog-bg" style="opacity:.25;"></div>
+                                        <div><div class="mdl-spinner mdl-js-spinner is-active qor-layout__bottomsheet-spinner"></div></div>
+                                    </div>`;
 
     QorSorter.plugin = function(options) {
         return this.each(function() {
