@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"path"
 	"strconv"
+	"strings"
 
 	"github.com/qor/admin"
 	"github.com/qor/qor"
@@ -106,6 +107,17 @@ func (s *Sorting) ConfigureQorResource(res resource.Resourcer) {
 		})
 
 		router := Admin.GetRouter()
-		router.Post(fmt.Sprintf("/%v/%v/sorting/update_position", res.ToParam(), res.ParamIDName()), updatePosition)
+		var paths []string
+		parent := res
+		for parent != nil {
+			paths = append(paths, parent.ParamIDName(), parent.ToParam())
+			parent = parent.ParentResource
+		}
+		for i, j := 0, len(paths) - 1; i < j; i, j = i + 1, j - 1 {
+			paths[i], paths[j] = paths[j], paths[i]
+		}
+		router.Post(fmt.Sprintf("/%v/sorting/update_position",
+			strings.Join(paths, "/")), updatePosition,
+				&admin.RouteConfig{Resource: res})
 	}
 }
