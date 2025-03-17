@@ -2,8 +2,6 @@ module github.com/qor/sorting
 
 go 1.23.0
 
-toolchain go1.24.1
-
 require (
 	github.com/jinzhu/gorm v1.9.14
 	github.com/qor/admin v0.0.0-20200701030804-02d81a10a8bf
