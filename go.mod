@@ -42,6 +42,6 @@ require (
 	github.com/theplant/htmltestingutils v0.0.0-20190423050759-0e06de7b6967 // indirect
 	github.com/theplant/testingutils v0.0.0-20220314083015-b74d1aa8ac8a // indirect
 	github.com/yosssi/gohtml v0.0.0-20201013000340-ee4748c638f4 // indirect
-	golang.org/x/net v0.36.0 // indirect
+	golang.org/x/net v0.37.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
