@@ -36,7 +36,9 @@
                 <span>
                   {{if $hasImage}}
                     {{if gt (len (index $values)) 2}}
-                    <img src="{{index $values 2}}">
+                    <span class="square-image-wrapper">
+                      <img src="{{index $values 2}}">
+                    </span>
                     {{end}}
                   {{end}}
                   {{index $values 1}}
