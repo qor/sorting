@@ -320,7 +320,7 @@
         '<li data-index="[[id]]" data-result-id="[[_resultId]]" data-value="[[value]]"><span>[[value]]</span><div><i class="material-icons qor-dragable__list-delete">clear</i><i class="material-icons qor-dragable__list-handle">drag_handle</i></div></li>';
 
     QorChooserSortable.LIST_HTML_WITH_IMAGE =
-        '<li data-index="[[id]]" data-result-id="[[_resultId]]" data-value="[[value]]"><span><img src="[[Image]]">[[value]]</span><div><i class="material-icons qor-dragable__list-delete">clear</i><i class="material-icons qor-dragable__list-handle">drag_handle</i></div></li>';
+        '<li data-index="[[id]]" data-result-id="[[_resultId]]" data-value="[[value]]"><span><span class="square-image-wrapper"><img src="[[Image]]"></span>[[value]]</span><div><i class="material-icons qor-dragable__list-delete">clear</i><i class="material-icons qor-dragable__list-handle">drag_handle</i></div></li>';
 
     QorChooserSortable.OPTION_HTML = '<option selected value="[[value]]"></option>';
 
