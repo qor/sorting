@@ -1,6 +1,6 @@
 module github.com/qor/sorting
 
-go 1.25
+go 1.25.0
 
 require (
 	github.com/jinzhu/gorm v1.9.16
@@ -39,6 +39,6 @@ require (
 	github.com/theplant/cldr v0.0.0-20190423050709-9f76f7ce4ee8 // indirect
 	github.com/theplant/testingutils v0.0.0-20220314083015-b74d1aa8ac8a // indirect
 	github.com/yosssi/gohtml v0.0.0-20201013000340-ee4748c638f4 // indirect
-	golang.org/x/net v0.47.0 // indirect
+	golang.org/x/net v0.55.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
